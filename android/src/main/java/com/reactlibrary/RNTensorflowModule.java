@@ -1,11 +1,10 @@
 
 package com.reactlibrary;
 
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import org.tensorflow.Graph;
-import org.tensorflow.Operation;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 public class RNTensorflowModule extends ReactContextBaseJavaModule {
@@ -49,25 +48,41 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public double[] fetch(String outputName, int outputSize) {
-    double[] dst = new double[outputSize];
-    this.inference.fetch(outputName, dst);
-    return dst;
+  public void fetch(String outputName, int outputSize, Callback errorCallback, Callback successCallback) {
+    try {
+      double[] dst = new double[outputSize];
+      this.inference.fetch(outputName, dst);
+      successCallback.invoke(dst);
+    } catch (Exception e) {
+      errorCallback.invoke(e);
+    }
   }
 
   @ReactMethod
-  public Graph graph() {
-    return this.inference.graph();
+  public void graph(Callback errorCallback, Callback successCallback) {
+    try {
+      successCallback.invoke(this.inference.graph());
+    } catch (Exception e) {
+      errorCallback.invoke(e);
+    }
   }
 
   @ReactMethod
-  public Operation graphOperation(String operationName) {
-    return this.inference.graphOperation(operationName);
+  public void graphOperation(String operationName, Callback errorCallback, Callback successCallback) {
+    try {
+      successCallback.invoke(this.inference.graphOperation(operationName));
+    } catch (Exception e) {
+      errorCallback.invoke(e);
+    }
   }
 
   @ReactMethod
-  public String stats() {
-    return this.inference.getStatString();
+  public void stats(Callback errorCallback, Callback successCallback) {
+    try {
+      successCallback.invoke(this.inference.getStatString());
+    } catch (Exception e) {
+      errorCallback.invoke(e);
+    }
   }
 
   @ReactMethod

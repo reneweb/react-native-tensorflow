@@ -15,6 +15,7 @@ build/Release
 node_modules/
 .eslintcache
 package-lock.json
+yarn.lock
 
 build/
 DerivedData/
