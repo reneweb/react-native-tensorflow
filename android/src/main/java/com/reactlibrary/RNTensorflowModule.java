@@ -30,27 +30,28 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void feed(String inputName, double[] src, long[] dims) {
-
+    this.inference.feed(inputName, src, dims);
   }
 
   @ReactMethod
   public void feed(String inputName, double[] src) {
-
+    this.inference.feed(inputName, src);
   }
 
   @ReactMethod
   public void run(String[] outputNames) {
-
+    this.inference.run(outputNames);
   }
 
   @ReactMethod
   public void run(String[] outputNames, boolean enableStats) {
-
+    this.inference.run(outputNames, enableStats);
   }
 
   @ReactMethod
-  public void fetch(String outputNames) {
-
+  public void fetch(String outputName) {
+    double[] dst = new double[0];
+    this.inference.fetch(outputName, dst);
   }
 
   @ReactMethod
