@@ -49,9 +49,10 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void fetch(String outputName) {
-    double[] dst = new double[0];
+  public double[] fetch(String outputName, int outputSize) {
+    double[] dst = new double[outputSize];
     this.inference.fetch(outputName, dst);
+    return dst;
   }
 
   @ReactMethod
