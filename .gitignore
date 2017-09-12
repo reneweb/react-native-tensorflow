@@ -47,7 +47,6 @@ proguard/
 .navigation/
 captures/
 android.iml
-build.gradle
 gradle/
 gradlew
 gradlew.bat
