@@ -1,10 +1,7 @@
 
 package com.reactlibrary;
 
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.*;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 public class RNTensorflowModule extends ReactContextBaseJavaModule {
@@ -48,40 +45,40 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void fetch(String outputName, int outputSize, Callback errorCallback, Callback successCallback) {
+  public void fetch(String outputName, int outputSize, Promise promise) {
     try {
       double[] dst = new double[outputSize];
       this.inference.fetch(outputName, dst);
-      successCallback.invoke(dst);
+      promise.resolve(dst);
     } catch (Exception e) {
-      errorCallback.invoke(e);
+      promise.reject(e);
     }
   }
 
   @ReactMethod
-  public void graph(Callback errorCallback, Callback successCallback) {
+  public void graph(Promise promise) {
     try {
-      successCallback.invoke(this.inference.graph());
+      promise.resolve(this.inference.graph());
     } catch (Exception e) {
-      errorCallback.invoke(e);
+      promise.reject(e);
     }
   }
 
   @ReactMethod
-  public void graphOperation(String operationName, Callback errorCallback, Callback successCallback) {
+  public void graphOperation(String operationName, Promise promise) {
     try {
-      successCallback.invoke(this.inference.graphOperation(operationName));
+      promise.resolve(this.inference.graphOperation(operationName));
     } catch (Exception e) {
-      errorCallback.invoke(e);
+      promise.reject(e);
     }
   }
 
   @ReactMethod
-  public void stats(Callback errorCallback, Callback successCallback) {
+  public void stats(Promise promise) {
     try {
-      successCallback.invoke(this.inference.getStatString());
+      promise.resolve(this.inference.getStatString());
     } catch (Exception e) {
-      errorCallback.invoke(e);
+      promise.reject(e);
     }
   }
 
