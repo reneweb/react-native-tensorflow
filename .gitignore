@@ -46,7 +46,7 @@ local.properties
 proguard/
 .navigation/
 captures/
-android.iml
+*.iml
 gradle/
 gradlew
 gradlew.bat
