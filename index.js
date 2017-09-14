@@ -38,7 +38,7 @@ class Tensorflow {
   }
 
   stats() {
-    return RNTensorflow.getStatString();
+    return RNTensorflow.stats();
   }
 
   close() {
