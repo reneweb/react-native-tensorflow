@@ -52,27 +52,27 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     }
 
     @ReactMethod
-    public void output(int output, Promise promise) {
+    public void output(int index, Promise promise) {
         try {
-            promise.resolve(graphOperation.output(output));
+            promise.resolve(graphOperation.output(index));
         } catch (Exception e) {
             promise.reject(e);
         }
     }
 
     @ReactMethod
-    public void outputList(int i, int ii, Promise promise) {
+    public void outputList(int index, int length, Promise promise) {
         try {
-            promise.resolve(graphOperation.outputList(i, ii));
+            promise.resolve(graphOperation.outputList(index, length));
         } catch (Exception e) {
             promise.reject(e);
         }
     }
 
     @ReactMethod
-    public void outputListLength(String s, Promise promise) {
+    public void outputListLength(String name, Promise promise) {
         try {
-            promise.resolve(graphOperation.outputListLength(s));
+            promise.resolve(graphOperation.outputListLength(name));
         } catch (Exception e) {
             promise.reject(e);
         }
