@@ -25,9 +25,9 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     }
 
     @ReactMethod
-    public void inputListLength(String s, Promise promise) {
+    public void inputListLength(String name, Promise promise) {
         try {
-            promise.resolve(graphOperation.inputListLength(s));
+            promise.resolve(graphOperation.inputListLength(name));
         } catch (Exception e) {
             promise.reject(e);
         }
