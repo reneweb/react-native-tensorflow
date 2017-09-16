@@ -1,10 +1,8 @@
 package com.reactlibrary;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.*;
 import org.tensorflow.Operation;
+import org.tensorflow.Output;
 
 public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModule {
 
@@ -54,7 +52,7 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     @ReactMethod
     public void output(int index, Promise promise) {
         try {
-            promise.resolve(graphOperation.output(index));
+            promise.resolve(OutputConverter.convert(graphOperation.output(index)));
         } catch (Exception e) {
             promise.reject(e);
         }
@@ -63,7 +61,12 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     @ReactMethod
     public void outputList(int index, int length, Promise promise) {
         try {
-            promise.resolve(graphOperation.outputList(index, length));
+            Output[] outputs = graphOperation.outputList(index, length);
+            WritableArray outputsConverted = new WritableNativeArray();
+            for (Output output : outputs) {
+                outputsConverted.pushMap(OutputConverter.convert(output));
+            }
+            promise.resolve(outputsConverted);
         } catch (Exception e) {
             promise.reject(e);
         }
