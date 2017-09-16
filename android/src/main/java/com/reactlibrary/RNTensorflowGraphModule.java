@@ -54,7 +54,7 @@ public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void close(Graph graph) {
+    public void close() {
         this.graph.close();
     }
 }
