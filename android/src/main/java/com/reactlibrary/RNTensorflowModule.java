@@ -5,10 +5,13 @@ import com.facebook.react.bridge.*;
 import org.tensorflow.Graph;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class RNTensorflowModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
-  private TensorFlowInferenceInterface inference;
+  private Map<String, TensorFlowInferenceInterface> inferences = new HashMap<>();
 
   public RNTensorflowModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -20,36 +23,56 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
     return "RNTensorflow";
   }
 
-  @ReactMethod
-  public void instantiateTensorflow(String modelFilePath) {
-    this.inference = new TensorFlowInferenceInterface(reactContext.getAssets(), modelFilePath);
+  @Override
+  public void onCatalystInstanceDestroy() {
+    for (String id : inferences.keySet()) {
+      this.close(id);
+    }
   }
 
   @ReactMethod
-  public void feed(String inputName, double[] src, long[] dims) {
-    this.inference.feed(inputName, src, dims);
+  public void instantiateTensorflow(String id, String modelFilePath) {
+    inferences.put(id, new TensorFlowInferenceInterface(reactContext.getAssets(), modelFilePath));
   }
 
   @ReactMethod
-  public void feed(String inputName, double[] src) {
-    this.inference.feed(inputName, src);
+  public void feed(String id, String inputName, double[] src, long[] dims) {
+    TensorFlowInferenceInterface inference = inferences.get(id);
+    if(inference != null) {
+      inference.feed(inputName, src, dims);
+    }
   }
 
   @ReactMethod
-  public void run(String[] outputNames) {
-    this.inference.run(outputNames);
+  public void feed(String id, String inputName, double[] src) {
+    TensorFlowInferenceInterface inference = inferences.get(id);
+    if(inference != null) {
+      inference.feed(inputName, src);
+    }
   }
 
   @ReactMethod
-  public void run(String[] outputNames, boolean enableStats) {
-    this.inference.run(outputNames, enableStats);
+  public void run(String id, String[] outputNames) {
+    TensorFlowInferenceInterface inference = inferences.get(id);
+    if(inference != null) {
+      inference.run(outputNames);
+    }
   }
 
   @ReactMethod
-  public void fetch(String outputName, int outputSize, Promise promise) {
+  public void run(String id, String[] outputNames, boolean enableStats) {
+    TensorFlowInferenceInterface inference = inferences.get(id);
+    if(inference != null) {
+      inference.run(outputNames, enableStats);
+    }
+  }
+
+  @ReactMethod
+  public void fetch(String id, String outputName, int outputSize, Promise promise) {
     try {
+      TensorFlowInferenceInterface inference = inferences.get(id);
       double[] dst = new double[outputSize];
-      this.inference.fetch(outputName, dst);
+      inference.fetch(outputName, dst);
       promise.resolve(dst);
     } catch (Exception e) {
       promise.reject(e);
@@ -57,10 +80,11 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void graph(Promise promise) {
+  public void graph(String id, Promise promise) {
     try {
+      TensorFlowInferenceInterface inference = inferences.get(id);
       RNTensorflowGraphModule graphModule = reactContext.getNativeModule(RNTensorflowGraphModule.class);
-      graphModule.init(this.inference.graph());
+      graphModule.init(inference.graph());
       promise.resolve(true);
     } catch (Exception e) {
       promise.reject(e);
@@ -68,25 +92,30 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void graphOperation(String operationName, Promise promise) {
+  public void graphOperation(String id, String operationName, Promise promise) {
     try {
-      promise.resolve(this.inference.graphOperation(operationName));
+      TensorFlowInferenceInterface inference = inferences.get(id);
+      promise.resolve(inference.graphOperation(operationName));
     } catch (Exception e) {
       promise.reject(e);
     }
   }
 
   @ReactMethod
-  public void stats(Promise promise) {
+  public void stats(String id, Promise promise) {
     try {
-      promise.resolve(this.inference.getStatString());
+      TensorFlowInferenceInterface inference = inferences.get(id);
+      promise.resolve(inference.getStatString());
     } catch (Exception e) {
       promise.reject(e);
     }
   }
 
   @ReactMethod
-  public void close() {
-    this.inference.close();
+  public void close(String id) {
+    TensorFlowInferenceInterface inference = this.inferences.remove(id);
+    if(inference != null) {
+      inference.close();
+    }
   }
 }

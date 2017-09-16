@@ -6,8 +6,6 @@ import org.tensorflow.Output;
 
 public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModule {
 
-    private Operation graphOperation;
-
     public RNTensorflowGraphOperationsModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
@@ -16,14 +14,13 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     public String getName() {
         return "TensorflorGraphOperation";
     }
-    
-    public void init(Operation graphOperation) {
-        this.graphOperation = graphOperation;
-    }
+
+    public void init() {}
 
     @ReactMethod
-    public void inputListLength(String name, Promise promise) {
+    public void inputListLength(String id, String opName, String name, Promise promise) {
         try {
+            Operation graphOperation = getGraphOperation(id, opName);
             promise.resolve(graphOperation.inputListLength(name));
         } catch (Exception e) {
             promise.reject(e);
@@ -31,8 +28,9 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     }
 
     @ReactMethod
-    public void name(Promise promise) {
+    public void name(String id, String opName, Promise promise) {
         try {
+            Operation graphOperation = getGraphOperation(id, opName);
             promise.resolve(graphOperation.name());
         } catch (Exception e) {
             promise.reject(e);
@@ -40,8 +38,9 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     }
 
     @ReactMethod
-    public void numOutputs(Promise promise) {
+    public void numOutputs(String id, String opName, Promise promise) {
         try {
+            Operation graphOperation = getGraphOperation(id, opName);
             promise.resolve(graphOperation.numOutputs());
         } catch (Exception e) {
             promise.reject(e);
@@ -49,8 +48,9 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     }
 
     @ReactMethod
-    public void output(int index, Promise promise) {
+    public void output(String id, String opName, int index, Promise promise) {
         try {
+            Operation graphOperation = getGraphOperation(id, opName);
             promise.resolve(OutputConverter.convert(graphOperation.output(index)));
         } catch (Exception e) {
             promise.reject(e);
@@ -58,8 +58,9 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     }
 
     @ReactMethod
-    public void outputList(int index, int length, Promise promise) {
+    public void outputList(String id, String opName, int index, int length, Promise promise) {
         try {
+            Operation graphOperation = getGraphOperation(id, opName);
             Output[] outputs = graphOperation.outputList(index, length);
             WritableArray outputsConverted = new WritableNativeArray();
             for (Output output : outputs) {
@@ -72,8 +73,9 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     }
 
     @ReactMethod
-    public void outputListLength(String name, Promise promise) {
+    public void outputListLength(String id, String opName, String name, Promise promise) {
         try {
+            Operation graphOperation = getGraphOperation(id, opName);
             promise.resolve(graphOperation.outputListLength(name));
         } catch (Exception e) {
             promise.reject(e);
@@ -81,11 +83,16 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     }
 
     @ReactMethod
-    public void type(Promise promise) {
+    public void type(String id, String opName, Promise promise) {
         try {
+            Operation graphOperation = getGraphOperation(id, opName);
             promise.resolve(graphOperation.type());
         } catch (Exception e) {
             promise.reject(e);
         }
+    }
+
+    private Operation getGraphOperation(String id, String name) {
+        return getReactApplicationContext().getNativeModule(RNTensorflowGraphModule.class).getOperation(id, name);
     }
 }
