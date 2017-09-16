@@ -13,7 +13,8 @@ import com.facebook.react.bridge.JavaScriptModule;
 public class RNTensorflowPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-      return Arrays.<NativeModule>asList(new RNTensorflowModule(reactContext));
+      return Arrays.<NativeModule>asList(new RNTensorflowModule(reactContext),
+              new RNTensorflowGraphModule(reactContext), new RNTensorflowGraphOperationsModule(reactContext));
     }
 
     // Deprecated from RN 0.47
