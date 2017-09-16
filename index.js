@@ -1,5 +1,6 @@
 
 import { NativeModules } from 'react-native';
+import uuid from 'react-native-uuid';
 
 const { RNTensorflow } = NativeModules;
 
@@ -13,39 +14,40 @@ class Tensorflow {
 
   constructor(modelFileName) {
     super()
+    this.id = uuid.v1()
     RNTensorflow.initTensorflow(modelFileName)
   }
 
   feedWithDims(inputName, src, dims) {
-    RNTensorflow.feed(inputName, src, dims);
+    RNTensorflow.feed(this.id, inputName, src, dims);
   }
 
   feed(inputName, src) {
-    RNTensorflow.feed(inputName, src);
+    RNTensorflow.feed(this.id, inputName, src);
   }
 
   run(outputNames) {
-    RNTensorflow.run(outputNames);
+    RNTensorflow.run(this.id, outputNames);
   }
 
   runWithStats(outputNames) {
-    RNTensorflow.run(outputNames, true);
+    RNTensorflow.run(this.id, outputNames, true);
   }
 
   fetch(outputName, outputSize) {
-    return RNTensorflow.fetch(outputName, dst);
+    return RNTensorflow.fetch(this.id, outputName, dst);
   }
 
   graph() {
-    return RNTensorflow.graph();
+    return RNTensorflow.graph(this.id);
   }
 
   stats() {
-    return RNTensorflow.stats();
+    return RNTensorflow.stats(this.id);
   }
 
   close() {
-    RNTensorflow.close();
+    RNTensorflow.close(this.id);
   }
 }
 
