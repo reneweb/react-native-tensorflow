@@ -10,9 +10,11 @@ import org.tensorflow.Graph;
 public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
 
     private Graph graph;
+    private ReactApplicationContext reactContext;
 
     public RNTensorflowGraphModule(ReactApplicationContext reactContext) {
         super(reactContext);
+        this.reactContext = reactContext;
     }
 
     @Override
@@ -47,7 +49,10 @@ public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void operation(String name, Promise promise) {
         try {
-            promise.resolve(this.graph.operation(name));
+            RNTensorflowGraphOperationsModule operationsModule =
+                    reactContext.getNativeModule(RNTensorflowGraphOperationsModule.class);
+            operationsModule.init(this.graph.operation(name));
+            promise.resolve(true);
         } catch (Exception e) {
             promise.resolve(e);
         }
