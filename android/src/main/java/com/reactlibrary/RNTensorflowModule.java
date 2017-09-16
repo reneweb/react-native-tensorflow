@@ -84,7 +84,7 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
     try {
       TensorFlowInferenceInterface inference = inferences.get(id);
       RNTensorflowGraphModule graphModule = reactContext.getNativeModule(RNTensorflowGraphModule.class);
-      graphModule.init(inference.graph());
+      graphModule.init(id, inference.graph());
       promise.resolve(true);
     } catch (Exception e) {
       promise.reject(e);
