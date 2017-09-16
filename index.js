@@ -5,7 +5,14 @@ const { RNTensorflow } = NativeModules;
 
 class Tensorflow {
 
-  initWithModel(modelFileName) {
+  static initWithModel(modelFileName, cb) {
+    tensorflow = new Tensorflow(modelFileName)
+    cb(tensorflow)
+    tensorflow.close()
+  }
+
+  constructor(modelFileName) {
+    super()
     RNTensorflow.initTensorflow(modelFileName)
   }
 
@@ -33,10 +40,6 @@ class Tensorflow {
     return RNTensorflow.graph();
   }
 
-  graphOperation(operationName) {
-    return RNTensorflow.graphOperation(operationName);
-  }
-
   stats() {
     return RNTensorflow.stats();
   }
@@ -46,4 +49,4 @@ class Tensorflow {
   }
 }
 
-export default new Tensorflow();
+export default Tensorflow;
