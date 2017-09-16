@@ -23,7 +23,7 @@ public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
 
     @Override
     public String getName() {
-        return "TensorflowGraph";
+        return "RNTensorflowGraph";
     }
 
     @Override
