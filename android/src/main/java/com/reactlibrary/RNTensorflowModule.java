@@ -92,16 +92,6 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void graphOperation(String id, String operationName, Promise promise) {
-    try {
-      TensorFlowInferenceInterface inference = inferences.get(id);
-      promise.resolve(inference.graphOperation(operationName));
-    } catch (Exception e) {
-      promise.reject(e);
-    }
-  }
-
-  @ReactMethod
   public void stats(String id, Promise promise) {
     try {
       TensorFlowInferenceInterface inference = inferences.get(id);
