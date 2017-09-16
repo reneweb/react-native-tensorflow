@@ -13,5 +13,8 @@
   "license": "",
   "devDependencies": {
     "react-native": ">=0.48.3"
+  },
+  "dependencies": {
+    "react-native-uuid": "^1.4.9"
   }
 }
