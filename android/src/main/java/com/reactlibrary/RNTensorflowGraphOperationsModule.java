@@ -16,8 +16,7 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     public String getName() {
         return "TensorflorGraphOperation";
     }
-
-    @ReactMethod
+    
     public void init(Operation graphOperation) {
         this.graphOperation = graphOperation;
     }

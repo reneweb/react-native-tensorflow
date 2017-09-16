@@ -22,7 +22,6 @@ public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
         return "TensorflowGraph";
     }
 
-    @ReactMethod
     public void init(Graph graph) {
         this.graph = graph;
     }
