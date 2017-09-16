@@ -2,12 +2,38 @@
 import { NativeModules } from 'react-native';
 import uuid from 'react-native-uuid';
 
-const { RNTensorflow } = NativeModules;
+const { RNTensorflow, RNTensorflowGraph, RNTensorflowGraphOperations } = NativeModules;
+
+class TensorflowGraph {
+  constructor(id) {
+    this.id = id
+  }
+
+  importGraphDef(graphDef) {
+    RNTensorflowGraph.importGraphDef(this.id, graphDef)
+  }
+
+  importGraphDef(graphDef, prefix) {
+    RNTensorflowGraph.importGraphDef(this.id, graphDef, prefix);
+  }
+
+  toGraphDef() {
+    return RNTensorflowGraph.toGraphDef(this.id);
+  }
+
+  operation(name) {
+    return RNTensorflowGraph.operation(this.id, name)
+  }
+
+  close() {
+    RNTensorflowGraph.close(this.id)
+  }
+}
 
 class Tensorflow {
 
   static initWithModel(modelFileName, cb) {
-    tensorflow = new Tensorflow(modelFileName)
+    const tensorflow = new Tensorflow(modelFileName)
     cb(tensorflow)
     tensorflow.close()
   }
@@ -39,7 +65,14 @@ class Tensorflow {
   }
 
   graph() {
-    return RNTensorflow.graph(this.id);
+    const resultPromise = RNTensorflow.graph(this.id)
+    return resultPromise.then(result =>
+      if(result) {
+        return new TensorflowGraph(this.id);
+      } else {
+        return Promise.reject(result)
+      }
+    )
   }
 
   stats() {
