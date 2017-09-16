@@ -1,5 +1,6 @@
 package com.reactlibrary;
 
+import android.util.Base64;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -25,19 +26,19 @@ public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void importGraphDef(byte[] graphDef) {
-        this.graph.importGraphDef(graphDef);
+    public void importGraphDef(String graphDef) {
+        this.graph.importGraphDef(Base64.decode(graphDef, Base64.DEFAULT));
     }
 
     @ReactMethod
-    public void importGraphDef(byte[] graphDef, String prefix) {
-        this.graph.importGraphDef(graphDef, prefix);
+    public void importGraphDef(String graphDef, String prefix) {
+        this.graph.importGraphDef(Base64.decode(graphDef, Base64.DEFAULT), prefix);
     }
 
     @ReactMethod
     public void toGraphDef(Promise promise) {
         try {
-            promise.resolve(this.graph.toGraphDef());
+            promise.resolve(Base64.encodeToString(this.graph.toGraphDef(), Base64.DEFAULT));
         } catch (Exception e) {
             promise.resolve(e);
         }
