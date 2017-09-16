@@ -2,6 +2,7 @@
 package com.reactlibrary;
 
 import com.facebook.react.bridge.*;
+import org.tensorflow.Graph;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 public class RNTensorflowModule extends ReactContextBaseJavaModule {
@@ -58,7 +59,9 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void graph(Promise promise) {
     try {
-      promise.resolve(this.inference.graph());
+      RNTensorflowGraphModule graphModule = reactContext.getNativeModule(RNTensorflowGraphModule.class);
+      graphModule.init(this.inference.graph());
+      promise.resolve(true);
     } catch (Exception e) {
       promise.reject(e);
     }
