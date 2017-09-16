@@ -5,8 +5,8 @@ const { RNTensorflow } = NativeModules;
 
 class Tensorflow {
 
-  setupForModel(modelFileName) {
-    RNTensorflow.instantiateTensorflow(modelFileName)
+  initWithModel(modelFileName) {
+    RNTensorflow.initTensorflow(modelFileName)
   }
 
   feedWithDims(inputName, src, dims) {

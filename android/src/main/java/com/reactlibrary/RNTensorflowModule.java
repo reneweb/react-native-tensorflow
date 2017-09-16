@@ -31,7 +31,7 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void instantiateTensorflow(String id, String modelFilePath) {
+  public void initTensorflow(String id, String modelFilePath) {
     inferences.put(id, new TensorFlowInferenceInterface(reactContext.getAssets(), modelFilePath));
   }
 
