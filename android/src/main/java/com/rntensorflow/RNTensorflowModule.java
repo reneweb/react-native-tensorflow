@@ -2,6 +2,7 @@
 package com.rntensorflow;
 
 import com.facebook.react.bridge.*;
+import com.rntensorflow.converter.ArrayConverter;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 import java.util.HashMap;
@@ -53,18 +54,18 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void run(String id, String[] outputNames) {
+  public void run(String id, ReadableArray outputNames) {
     TensorFlowInferenceInterface inference = inferences.get(id);
     if(inference != null) {
-      inference.run(outputNames);
+      inference.run(readableArrayToStringArray(outputNames));
     }
   }
 
   @ReactMethod
-  public void runWithStatsFlag(String id, String[] outputNames, boolean enableStats) {
+  public void runWithStatsFlag(String id, ReadableArray outputNames, boolean enableStats) {
     TensorFlowInferenceInterface inference = inferences.get(id);
     if(inference != null) {
-      inference.run(outputNames, enableStats);
+      inference.run(readableArrayToStringArray(outputNames), enableStats);
     }
   }
 
