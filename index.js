@@ -1,6 +1,6 @@
 
 import { NativeModules } from 'react-native';
-import uuid from 'react-native-uuid';
+import uuid from 'uuid/v1';
 
 const { RNTensorflow, RNTensorflowGraph, RNTensorflowGraphOperations } = NativeModules;
 
@@ -58,13 +58,13 @@ class TensorflowGraph {
 
   operation(name) {
     const resultPromise = RNTensorflowGraph.operation(this.id, name)
-    return resultPromise.then(result =>
+    return resultPromise.then(result => {
       if(result) {
         return new TensorflowOperation(this.id, name);
       } else {
         return Promise.reject(result)
       }
-    )
+    })
   }
 
   close() {
@@ -81,8 +81,7 @@ class Tensorflow {
   }
 
   constructor(modelFileName) {
-    super()
-    this.id = uuid.v1()
+    this.id = uuid()
     RNTensorflow.initTensorflow(modelFileName)
   }
 
@@ -108,13 +107,13 @@ class Tensorflow {
 
   graph() {
     const resultPromise = RNTensorflow.graph(this.id)
-    return resultPromise.then(result =>
+    return resultPromise.then(result => {
       if(result) {
         return new TensorflowGraph(this.id);
       } else {
         return Promise.reject(result)
       }
-    )
+    })
   }
 
   stats() {
