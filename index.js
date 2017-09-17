@@ -82,7 +82,7 @@ class Tensorflow {
 
   constructor(modelFileName) {
     this.id = uuid()
-    RNTensorflow.initTensorflow(modelFileName)
+    RNTensorflow.initTensorflow(this.id, modelFileName)
   }
 
   feedWithDims(inputName, src, dims) {
