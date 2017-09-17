@@ -4,6 +4,41 @@ import uuid from 'react-native-uuid';
 
 const { RNTensorflow, RNTensorflowGraph, RNTensorflowGraphOperations } = NativeModules;
 
+class TensorflowOperation {
+  constructor(id, opName) {
+    this.id = id
+    this.opName = opName
+  }
+
+  inputListLength(name) {
+    return RNTensorflowGraphOperations.inputListLength(this.id, this.opName, name);
+  }
+
+  name() {
+    return RNTensorflowGraphOperations.name(this.id, this.opName)
+  }
+
+  numOutputs() {
+    return RNTensorflowGraphOperations.numOutputs(this.id, this.opName)
+  }
+
+  output(index) {
+    return RNTensorflowGraphOperations.output(this.id, this.opName, index)
+  }
+
+  outputList(index, length) {
+    return RNTensorflowGraphOperations.outputList(this.id, this.opName, index, length)
+  }
+
+  outputListLength(name) {
+    return RNTensorflowGraphOperations.outputListLength(this.id, this.opName, name)
+  }
+
+  type() {
+    return RNTensorflowGraphOperations.type(this.id, this.opName)
+  }
+}
+
 class TensorflowGraph {
   constructor(id) {
     this.id = id
@@ -22,7 +57,14 @@ class TensorflowGraph {
   }
 
   operation(name) {
-    return RNTensorflowGraph.operation(this.id, name)
+    const resultPromise = RNTensorflowGraph.operation(this.id, name)
+    return resultPromise.then(result =>
+      if(result) {
+        return new TensorflowOperation(this.id, name);
+      } else {
+        return Promise.reject(result)
+      }
+    )
   }
 
   close() {
