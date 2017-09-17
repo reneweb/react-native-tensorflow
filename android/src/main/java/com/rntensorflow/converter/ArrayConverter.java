@@ -1,61 +1,63 @@
 package com.rntensorflow.converter;
 
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableNativeArray;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableNativeArray;
 
 public class ArrayConverter {
 
-    public static String[] nativeArrayToStringArray(ReadableNativeArray nativeArray) {
-        String[] arr = new String[nativeArray.size()];
-        for (int i = 0; i < nativeArray.size(); i++) {
-            arr[i] = nativeArray.getString(i);
+    public static String[] readableArrayToStringArray(ReadableArray readableArray) {
+        String[] arr = new String[readableArray.size()];
+        for (int i = 0; i < readableArray.size(); i++) {
+            arr[i] = readableArray.getString(i);
         }
 
         return arr;
     }
 
-    public static double[] nativeArrayToDoubleArray(ReadableNativeArray nativeArray) {
-        double[] arr = new double[nativeArray.size()];
-        for (int i = 0; i < nativeArray.size(); i++) {
-            arr[i] = nativeArray.getDouble(i);
+    public static double[] readableArrayToDoubleArray(ReadableArray readableArray) {
+        double[] arr = new double[readableArray.size()];
+        for (int i = 0; i < readableArray.size(); i++) {
+            arr[i] = readableArray.getDouble(i);
         }
 
         return arr;
     }
 
-    public static long[] nativeArrayToLongArray(ReadableNativeArray nativeArray) {
-        long[] arr = new long[nativeArray.size()];
-        for (int i = 0; i < nativeArray.size(); i++) {
-            arr[i] = (long)nativeArray.getDouble(i);
+    public static long[] readableArrayToLongArray(ReadableArray readableArray) {
+        long[] arr = new long[readableArray.size()];
+        for (int i = 0; i < readableArray.size(); i++) {
+            arr[i] = (long)readableArray.getDouble(i);
         }
 
         return arr;
     }
 
-    public static ReadableNativeArray stringArrayToNativeArray(String[] arr) {
-        WritableNativeArray nativeArray = new WritableNativeArray();
+    public static ReadableArray stringArrayToReadableArray(String[] arr) {
+        WritableArray writableArray = new WritableNativeArray();
         for (int i = 0; i < arr.length; i++) {
-            nativeArray.pushString(arr[i]);
+            writableArray.pushString(arr[i]);
         }
 
-        return nativeArray;
+        return writableArray;
     }
 
-    public static ReadableNativeArray doubleArrayToNativeArray(double[] arr) {
-        WritableNativeArray nativeArray = new WritableNativeArray();
+    public static ReadableArray doubleArrayToReadableArray(double[] arr) {
+        WritableArray writableArray = new WritableNativeArray();
         for (int i = 0; i < arr.length; i++) {
-            nativeArray.pushDouble(arr[i]);
+            writableArray.pushDouble(arr[i]);
         }
 
-        return nativeArray;
+        return writableArray;
     }
 
-    public static ReadableNativeArray longArrayToNativeArray(long[] arr) {
-        WritableNativeArray nativeArray = new WritableNativeArray();
+    public static ReadableArray longArrayToReadableArray(long[] arr) {
+        WritableArray writableArray = new WritableNativeArray();
         for (int i = 0; i < arr.length; i++) {
-            nativeArray.pushDouble(arr[i]);
+            writableArray.pushDouble(arr[i]);
         }
 
-        return nativeArray;
+        return writableArray;
     }
 }

@@ -7,6 +7,8 @@ import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.rntensorflow.converter.ArrayConverter.*;
+
 public class RNTensorflowModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
@@ -35,18 +37,18 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void feed(String id, String inputName, double[] src, long[] dims) {
+  public void feed(String id, String inputName, ReadableArray src, ReadableArray dims) {
     TensorFlowInferenceInterface inference = inferences.get(id);
     if(inference != null) {
-      inference.feed(inputName, src, dims);
+      inference.feed(inputName, readableArrayToDoubleArray(src), readableArrayToLongArray(dims));
     }
   }
 
   @ReactMethod
-  public void feed(String id, String inputName, double[] src) {
+  public void feed(String id, String inputName, ReadableArray src) {
     TensorFlowInferenceInterface inference = inferences.get(id);
     if(inference != null) {
-      inference.feed(inputName, src);
+      inference.feed(inputName, readableArrayToDoubleArray(src));
     }
   }
 
@@ -72,7 +74,7 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
       TensorFlowInferenceInterface inference = inferences.get(id);
       double[] dst = new double[outputSize];
       inference.fetch(outputName, dst);
-      promise.resolve(dst);
+      promise.resolve(doubleArrayToReadableArray(dst));
     } catch (Exception e) {
       promise.reject(e);
     }
