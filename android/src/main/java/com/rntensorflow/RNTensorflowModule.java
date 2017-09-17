@@ -1,8 +1,7 @@
 
-package com.reactlibrary;
+package com.rntensorflow;
 
 import com.facebook.react.bridge.*;
-import org.tensorflow.Graph;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 import java.util.HashMap;

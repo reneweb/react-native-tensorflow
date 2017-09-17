@@ -1,4 +1,4 @@
-package com.reactlibrary;
+package com.rntensorflow;
 
 import android.util.Base64;
 import com.facebook.react.bridge.Promise;

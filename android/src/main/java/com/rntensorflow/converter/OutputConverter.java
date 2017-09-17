@@ -1,4 +1,4 @@
-package com.reactlibrary;
+package com.rntensorflow.converter;
 
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;

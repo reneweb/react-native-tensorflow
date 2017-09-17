@@ -1,6 +1,7 @@
-package com.reactlibrary;
+package com.rntensorflow;
 
 import com.facebook.react.bridge.*;
+import com.rntensorflow.converter.OutputConverter;
 import org.tensorflow.Operation;
 import org.tensorflow.Output;
 
