@@ -55,7 +55,7 @@ public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void importGraphDef(String id, String graphDef, String prefix) {
+    public void importGraphDefWithPrefix(String id, String graphDef, String prefix) {
         Graph graph = graphs.get(id);
         if(graph != null) {
             graph.importGraphDef(Base64.decode(graphDef, Base64.DEFAULT), prefix);

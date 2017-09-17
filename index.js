@@ -48,8 +48,8 @@ class TensorflowGraph {
     RNTensorflowGraph.importGraphDef(this.id, graphDef)
   }
 
-  importGraphDef(graphDef, prefix) {
-    RNTensorflowGraph.importGraphDef(this.id, graphDef, prefix);
+  importGraphDefWithPrefix(graphDef, prefix) {
+    RNTensorflowGraph.importGraphDefWithPrefix(this.id, graphDef, prefix);
   }
 
   toGraphDef() {
@@ -86,7 +86,7 @@ class Tensorflow {
   }
 
   feedWithDims(inputName, src, dims) {
-    RNTensorflow.feed(this.id, inputName, src, dims);
+    RNTensorflow.feedWithDims(this.id, inputName, src, dims);
   }
 
   feed(inputName, src) {
@@ -98,7 +98,7 @@ class Tensorflow {
   }
 
   runWithStats(outputNames) {
-    RNTensorflow.run(this.id, outputNames, true);
+    RNTensorflow.runWithStatsFlag(this.id, outputNames, true);
   }
 
   fetch(outputName, outputSize) {

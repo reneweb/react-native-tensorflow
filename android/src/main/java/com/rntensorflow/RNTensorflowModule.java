@@ -37,7 +37,7 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void feed(String id, String inputName, ReadableArray src, ReadableArray dims) {
+  public void feedWithDims(String id, String inputName, ReadableArray src, ReadableArray dims) {
     TensorFlowInferenceInterface inference = inferences.get(id);
     if(inference != null) {
       inference.feed(inputName, readableArrayToDoubleArray(src), readableArrayToLongArray(dims));
@@ -61,7 +61,7 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void run(String id, String[] outputNames, boolean enableStats) {
+  public void runWithStatsFlag(String id, String[] outputNames, boolean enableStats) {
     TensorFlowInferenceInterface inference = inferences.get(id);
     if(inference != null) {
       inference.run(outputNames, enableStats);
