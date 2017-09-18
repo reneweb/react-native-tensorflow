@@ -13,7 +13,7 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
 
     @Override
     public String getName() {
-        return "RNTensorflorGraphOperation";
+        return "RNTensorflowGraphOperations";
     }
 
     public void init() {}
