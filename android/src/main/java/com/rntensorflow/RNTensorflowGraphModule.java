@@ -39,7 +39,7 @@ public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
 
     public Operation getOperation(String id, String name) {
         Graph graph = graphs.get(id);
-        if(graph != null) {
+        if(graph != null && name != null) {
             return graph.operation(name);
         } else {
             return null;
