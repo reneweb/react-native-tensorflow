@@ -102,7 +102,7 @@ class Tensorflow {
   }
 
   fetch(outputName, outputSize) {
-    return RNTensorflow.fetch(this.id, outputName, dst);
+    return RNTensorflow.fetch(this.id, outputName, outputSize);
   }
 
   graph() {
