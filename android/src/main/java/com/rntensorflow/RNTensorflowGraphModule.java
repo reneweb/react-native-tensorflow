@@ -68,7 +68,7 @@ public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
             Graph graph = graphs.get(id);
             promise.resolve(Base64.encodeToString(graph.toGraphDef(), Base64.DEFAULT));
         } catch (Exception e) {
-            promise.resolve(e);
+            promise.reject(e);
         }
     }
 
@@ -80,7 +80,7 @@ public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
             operationsModule.init();
             promise.resolve(true);
         } catch (Exception e) {
-            promise.resolve(e);
+            promise.reject(e);
         }
     }
 
