@@ -11,19 +11,19 @@ import org.tensorflow.Operation;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
+public class RNTensorFlowGraphModule extends ReactContextBaseJavaModule {
 
     private ReactApplicationContext reactContext;
     private Map<String, Graph> graphs = new HashMap<>();
 
-    public RNTensorflowGraphModule(ReactApplicationContext reactContext) {
+    public RNTensorFlowGraphModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
     }
 
     @Override
     public String getName() {
-        return "RNTensorflowGraph";
+        return "RNTensorFlowGraph";
     }
 
     @Override
@@ -75,8 +75,8 @@ public class RNTensorflowGraphModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void operation(String id, String name, Promise promise) {
         try {
-            RNTensorflowGraphOperationsModule operationsModule =
-                    reactContext.getNativeModule(RNTensorflowGraphOperationsModule.class);
+            RNTensorFlowGraphOperationsModule operationsModule =
+                    reactContext.getNativeModule(RNTensorFlowGraphOperationsModule.class);
             operationsModule.init();
             promise.resolve(true);
         } catch (Exception e) {

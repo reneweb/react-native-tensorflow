@@ -5,15 +5,15 @@ import com.rntensorflow.converter.OutputConverter;
 import org.tensorflow.Operation;
 import org.tensorflow.Output;
 
-public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModule {
+public class RNTensorFlowGraphOperationsModule extends ReactContextBaseJavaModule {
 
-    public RNTensorflowGraphOperationsModule(ReactApplicationContext reactContext) {
+    public RNTensorFlowGraphOperationsModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
     @Override
     public String getName() {
-        return "RNTensorflowGraphOperations";
+        return "RNTensorFlowGraphOperations";
     }
 
     public void init() {}
@@ -94,6 +94,6 @@ public class RNTensorflowGraphOperationsModule extends ReactContextBaseJavaModul
     }
 
     private Operation getGraphOperation(String id, String name) {
-        return getReactApplicationContext().getNativeModule(RNTensorflowGraphModule.class).getOperation(id, name);
+        return getReactApplicationContext().getNativeModule(RNTensorFlowGraphModule.class).getOperation(id, name);
     }
 }

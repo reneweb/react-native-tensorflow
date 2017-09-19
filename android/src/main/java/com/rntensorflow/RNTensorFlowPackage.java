@@ -10,11 +10,12 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 import com.facebook.react.bridge.JavaScriptModule;
-public class RNTensorflowPackage implements ReactPackage {
+
+public class RNTensorFlowPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-      return Arrays.<NativeModule>asList(new RNTensorflowModule(reactContext),
-              new RNTensorflowGraphModule(reactContext), new RNTensorflowGraphOperationsModule(reactContext));
+      return Arrays.<NativeModule>asList(new RNTensorFlowInferenceModule(reactContext),
+              new RNTensorFlowGraphModule(reactContext), new RNTensorFlowGraphOperationsModule(reactContext));
     }
 
     // Deprecated from RN 0.47

@@ -2,7 +2,6 @@
 package com.rntensorflow;
 
 import com.facebook.react.bridge.*;
-import com.rntensorflow.converter.ArrayConverter;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 import java.util.HashMap;
@@ -10,19 +9,19 @@ import java.util.Map;
 
 import static com.rntensorflow.converter.ArrayConverter.*;
 
-public class RNTensorflowModule extends ReactContextBaseJavaModule {
+public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
   private Map<String, TensorFlowInferenceInterface> inferences = new HashMap<>();
 
-  public RNTensorflowModule(ReactApplicationContext reactContext) {
+  public RNTensorFlowInferenceModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
   }
 
   @Override
   public String getName() {
-    return "RNTensorflow";
+    return "RNTensorFlowInference";
   }
 
   @Override
@@ -33,7 +32,7 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void initTensorflow(String id, String modelFilePath) {
+  public void initTensorFlowInference(String id, String modelFilePath) {
     inferences.put(id, new TensorFlowInferenceInterface(reactContext.getAssets(), modelFilePath));
   }
 
@@ -85,7 +84,7 @@ public class RNTensorflowModule extends ReactContextBaseJavaModule {
   public void graph(String id, Promise promise) {
     try {
       TensorFlowInferenceInterface inference = inferences.get(id);
-      RNTensorflowGraphModule graphModule = reactContext.getNativeModule(RNTensorflowGraphModule.class);
+      RNTensorFlowGraphModule graphModule = reactContext.getNativeModule(RNTensorFlowGraphModule.class);
       graphModule.init(id, inference.graph());
       promise.resolve(true);
     } catch (Exception e) {

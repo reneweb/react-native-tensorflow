@@ -2,65 +2,65 @@
 import { NativeModules } from 'react-native';
 import uuid from 'uuid/v1';
 
-const { RNTensorflow, RNTensorflowGraph, RNTensorflowGraphOperations } = NativeModules;
+const { RNTensorFlowInference, RNTensorFlowGraph, RNTensorFlowGraphOperations } = NativeModules;
 
-class TensorflowOperation {
+class TensorFlowOperation {
   constructor(id, opName) {
     this.id = id
     this.opName = opName
   }
 
   inputListLength(name) {
-    return RNTensorflowGraphOperations.inputListLength(this.id, this.opName, name);
+    return RNTensorFlowGraphOperations.inputListLength(this.id, this.opName, name);
   }
 
   name() {
-    return RNTensorflowGraphOperations.name(this.id, this.opName)
+    return RNTensorFlowGraphOperations.name(this.id, this.opName)
   }
 
   numOutputs() {
-    return RNTensorflowGraphOperations.numOutputs(this.id, this.opName)
+    return RNTensorFlowGraphOperations.numOutputs(this.id, this.opName)
   }
 
   output(index) {
-    return RNTensorflowGraphOperations.output(this.id, this.opName, index)
+    return RNTensorFlowGraphOperations.output(this.id, this.opName, index)
   }
 
   outputList(index, length) {
-    return RNTensorflowGraphOperations.outputList(this.id, this.opName, index, length)
+    return RNTensorFlowGraphOperations.outputList(this.id, this.opName, index, length)
   }
 
   outputListLength(name) {
-    return RNTensorflowGraphOperations.outputListLength(this.id, this.opName, name)
+    return RNTensorFlowGraphOperations.outputListLength(this.id, this.opName, name)
   }
 
   type() {
-    return RNTensorflowGraphOperations.type(this.id, this.opName)
+    return RNTensorFlowGraphOperations.type(this.id, this.opName)
   }
 }
 
-class TensorflowGraph {
+class TensorFlowGraph {
   constructor(id) {
     this.id = id
   }
 
   importGraphDef(graphDef) {
-    RNTensorflowGraph.importGraphDef(this.id, graphDef)
+    RNTensorFlowGraph.importGraphDef(this.id, graphDef)
   }
 
   importGraphDefWithPrefix(graphDef, prefix) {
-    RNTensorflowGraph.importGraphDefWithPrefix(this.id, graphDef, prefix);
+    RNTensorFlowGraph.importGraphDefWithPrefix(this.id, graphDef, prefix);
   }
 
   toGraphDef() {
-    return RNTensorflowGraph.toGraphDef(this.id);
+    return RNTensorFlowGraph.toGraphDef(this.id);
   }
 
   operation(name) {
-    const resultPromise = RNTensorflowGraph.operation(this.id, name)
+    const resultPromise = RNTensorFlowGraph.operation(this.id, name)
     return resultPromise.then(result => {
       if(result) {
-        return new TensorflowOperation(this.id, name);
+        return new TensorFlowOperation(this.id, name);
       } else {
         return Promise.reject(result)
       }
@@ -68,48 +68,42 @@ class TensorflowGraph {
   }
 
   close() {
-    RNTensorflowGraph.close(this.id)
+    RNTensorFlowGraph.close(this.id)
   }
 }
 
-class Tensorflow {
-
-  static initWithModel(modelFileName, cb) {
-    const tensorflow = new Tensorflow(modelFileName)
-    cb(tensorflow)
-    tensorflow.close()
-  }
+class TensorFlowInference {
 
   constructor(modelFileName) {
     this.id = uuid()
-    RNTensorflow.initTensorflow(this.id, modelFileName)
+    RNTensorFlowInference.initTensorFlowInference(this.id, modelFileName)
   }
 
   feedWithDims(inputName, src, dims) {
-    RNTensorflow.feedWithDims(this.id, inputName, src, dims);
+    RNTensorFlowInference.feedWithDims(this.id, inputName, src, dims);
   }
 
   feed(inputName, src) {
-    RNTensorflow.feed(this.id, inputName, src);
+    RNTensorFlowInference.feed(this.id, inputName, src);
   }
 
   run(outputNames) {
-    RNTensorflow.run(this.id, outputNames);
+    RNTensorFlowInference.run(this.id, outputNames);
   }
 
   runWithStats(outputNames) {
-    RNTensorflow.runWithStatsFlag(this.id, outputNames, true);
+    RNTensorFlowInference.runWithStatsFlag(this.id, outputNames, true);
   }
 
   fetch(outputName, outputSize) {
-    return RNTensorflow.fetch(this.id, outputName, outputSize);
+    return RNTensorFlowInference.fetch(this.id, outputName, outputSize);
   }
 
   graph() {
-    const resultPromise = RNTensorflow.graph(this.id)
+    const resultPromise = RNTensorFlowInference.graph(this.id)
     return resultPromise.then(result => {
       if(result) {
-        return new TensorflowGraph(this.id);
+        return new TensorFlowGraph(this.id);
       } else {
         return Promise.reject(result)
       }
@@ -117,12 +111,12 @@ class Tensorflow {
   }
 
   stats() {
-    return RNTensorflow.stats(this.id);
+    return RNTensorFlowInference.stats(this.id);
   }
 
   close() {
-    RNTensorflow.close(this.id);
+    RNTensorFlowInference.close(this.id);
   }
 }
 
-export default Tensorflow;
+export default TensorFlowInference;
