@@ -1,6 +1,10 @@
 
 # react-native-tensorflow
 
+A library providing TensorFlow inference for react native applications.
+
+_This is currently only supporting android_
+
 ## Getting started
 
 `$ npm install react-native-tensorflow --save`
@@ -22,8 +26,8 @@
 #### Android
 
 1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import com.reactlibrary.RNTensorflowPackage;` to the imports at the top of the file
-  - Add `new RNTensorflowPackage()` to the list returned by the `getPackages()` method
+  - Add `import com.rntensorflow.RNTensorFlowPackage;` to the imports at the top of the file
+  - Add `new RNTensorFlowPackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
   	```
   	include ':react-native-tensorflow'
@@ -35,9 +39,14 @@
   	```
 
 ## Usage
+
+First you need to put a model in the android/src/main/assets folder.
+Then you can create an instance providing the file name of the model and start using it.
+
 ```javascript
-import RNTensorflow from 'react-native-tensorflow';
+import TensorFlowInference from 'react-native-tensorflow';
 
 
-RNTensorflow;
+const tensorflowInference = new TensorFlowInference('tensorflow_inception_graph.pb')
+tensorflowInference.stats().then(s => console.log(s))
 ```
