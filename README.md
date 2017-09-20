@@ -42,12 +42,18 @@ _This library is currently only supporting android_
 ## Usage
 
 First you need to put a model in the android/src/main/assets folder.
-Then you can create an instance providing the file name of the model and start using it.
+Then you can create an instance providing the file name of the model.
+Next you will need to feed an image in the form of a number array.
+Then run the inference and lastly fetch the result.
 
 ```javascript
 import TensorFlowInference from 'react-native-tensorflow';
 
 
 const tensorflowInference = new TensorFlowInference('tensorflow_inception_graph.pb')
-tensorflowInference.stats().then(s => console.log(s))
+tensorflowInference.feed('inputName', [1,2,3,4,...])
+tensorflowInference.run('outputNames')
+tensorflowInference.fetch('outputName', 10).then(output => console.log(output))
 ```
+
+Check the android TensorFlow example for more information on the API: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowImageClassifier.java
