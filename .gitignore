@@ -35,6 +35,9 @@ xcuserdata/
 *.ipa
 *.dSYM.zip
 *.dSYM
+Pods
+Podfile.lock
+.DS_Store
 
 *.apk
 *.dex
