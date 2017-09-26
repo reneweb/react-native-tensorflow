@@ -1,12 +1,9 @@
-//
-//  RNTensorFlowInference.h
-//  RNTensorflow
-//
-//  Created by Weber, Rene on 26/09/2017.
-//
+#if __has_include("RCTBridgeModule.h")
+#import "RCTBridgeModule.h"
+#else
+#import <React/RCTBridgeModule.h>
+#endif
 
-#ifndef RNTensorFlowInference_h
-#define RNTensorFlowInference_h
+@interface RNTensorFlowInference : NSObject <RCTBridgeModule>
 
-
-#endif /* RNTensorFlowInference_h */
+@end

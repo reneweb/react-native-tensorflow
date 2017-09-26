@@ -7,10 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		975CD8451F79E183005D2BB8 /* RNTensorFlowInference.m in Sources */ = {isa = PBXBuildFile; fileRef = 975CD8441F79E183005D2BB8 /* RNTensorFlowInference.m */; };
-		975CD8481F79E1B6005D2BB8 /* RNTensorFlowGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = 975CD8471F79E1B6005D2BB8 /* RNTensorFlowGraph.m */; };
-		975CD84A1F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.m in Sources */ = {isa = PBXBuildFile; fileRef = 975CD8491F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.m */; };
-		B3E7B58A1CC2AC0600A0062D /* RNTensorflow.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNTensorflow.mm */; };
+		975CD8451F79E183005D2BB8 /* RNTensorFlowInference.mm in Sources */ = {isa = PBXBuildFile; fileRef = 975CD8441F79E183005D2BB8 /* RNTensorFlowInference.mm */; };
+		975CD8481F79E1B6005D2BB8 /* RNTensorFlowGraph.mm in Sources */ = {isa = PBXBuildFile; fileRef = 975CD8471F79E1B6005D2BB8 /* RNTensorFlowGraph.mm */; };
+		975CD84A1F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.mm in Sources */ = {isa = PBXBuildFile; fileRef = 975CD8491F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,14 +26,12 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNTensorflow.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNTensorflow.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		975CD8441F79E183005D2BB8 /* RNTensorFlowInference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNTensorFlowInference.m; sourceTree = "<group>"; };
+		975CD8441F79E183005D2BB8 /* RNTensorFlowInference.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RNTensorFlowInference.mm; sourceTree = "<group>"; };
 		975CD8461F79E199005D2BB8 /* RNTensorFlowInference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNTensorFlowInference.h; sourceTree = "<group>"; };
-		975CD8471F79E1B6005D2BB8 /* RNTensorFlowGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNTensorFlowGraph.m; sourceTree = "<group>"; };
-		975CD8491F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNTensorFlowGraphOperations.m; sourceTree = "<group>"; };
+		975CD8471F79E1B6005D2BB8 /* RNTensorFlowGraph.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RNTensorFlowGraph.mm; sourceTree = "<group>"; };
+		975CD8491F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RNTensorFlowGraphOperations.mm; sourceTree = "<group>"; };
 		975CD84B1F79E1D7005D2BB8 /* RNTensorFlowGraph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNTensorFlowGraph.h; sourceTree = "<group>"; };
 		975CD84C1F79E1E1005D2BB8 /* RNTensorFlowGraphOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNTensorFlowGraphOperations.h; sourceTree = "<group>"; };
-		B3E7B5881CC2AC0600A0062D /* RNTensorflow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNTensorflow.h; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* RNTensorflow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RNTensorflow.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,12 +58,10 @@
 			children = (
 				975CD84C1F79E1E1005D2BB8 /* RNTensorFlowGraphOperations.h */,
 				975CD84B1F79E1D7005D2BB8 /* RNTensorFlowGraph.h */,
-				975CD8491F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.m */,
-				975CD8471F79E1B6005D2BB8 /* RNTensorFlowGraph.m */,
+				975CD8491F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.mm */,
+				975CD8471F79E1B6005D2BB8 /* RNTensorFlowGraph.mm */,
 				975CD8461F79E199005D2BB8 /* RNTensorFlowInference.h */,
-				975CD8441F79E183005D2BB8 /* RNTensorFlowInference.m */,
-				B3E7B5881CC2AC0600A0062D /* RNTensorflow.h */,
-				B3E7B5891CC2AC0600A0062D /* RNTensorflow.mm */,
+				975CD8441F79E183005D2BB8 /* RNTensorFlowInference.mm */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -127,10 +122,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				975CD8481F79E1B6005D2BB8 /* RNTensorFlowGraph.m in Sources */,
-				975CD84A1F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.m in Sources */,
-				975CD8451F79E183005D2BB8 /* RNTensorFlowInference.m in Sources */,
-				B3E7B58A1CC2AC0600A0062D /* RNTensorflow.mm in Sources */,
+				975CD8481F79E1B6005D2BB8 /* RNTensorFlowGraph.mm in Sources */,
+				975CD84A1F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.mm in Sources */,
+				975CD8451F79E183005D2BB8 /* RNTensorFlowInference.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

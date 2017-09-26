@@ -1,12 +1,9 @@
-//
-//  RNTensorFlowGraph.h
-//  RNTensorflow
-//
-//  Created by Weber, Rene on 26/09/2017.
-//
+#if __has_include("RCTBridgeModule.h")
+#import "RCTBridgeModule.h"
+#else
+#import <React/RCTBridgeModule.h>
+#endif
 
-#ifndef RNTensorFlowGraph_h
-#define RNTensorFlowGraph_h
+@interface RNTensorFlowGraph : NSObject <RCTBridgeModule>
 
-
-#endif /* RNTensorFlowGraph_h */
+@end

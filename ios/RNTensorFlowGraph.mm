@@ -1,7 +1,6 @@
+#import "RNTensorFlowGraph.h"
 
-#import "RNTensorflow.h"
-
-@implementation RNTensorflow
+@implementation RNTensorFlowGraph
 
 - (dispatch_queue_t)methodQueue
 {
@@ -10,4 +9,4 @@
 RCT_EXPORT_MODULE()
 
 @end
-  
+
