@@ -1,11 +1,23 @@
 #import "RNTensorFlowInference.h"
 
 @implementation RNTensorFlowInference
+{
+    NSMutableDictionary * inferences;
+}
+
+- (instancetype)init
+{
+    if ((self = [super init])) {
+        inferences = [NSMutableDictionary new];
+    }
+    return self;
+}
 
 - (dispatch_queue_t)methodQueue
 {
     return dispatch_get_main_queue();
 }
+
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(initTensorFlowInference:(NSString *)id modelFilePath:(NSString *)modelFilePath)
