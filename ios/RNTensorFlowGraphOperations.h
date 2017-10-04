@@ -1,8 +1,11 @@
-#if __has_include("RCTBridgeModule.h")
-#import "RCTBridgeModule.h"
+#if __has_include("RCTBridge.h")
+#import "RCTBridge.h"
 #else
-#import <React/RCTBridgeModule.h>
+#import <React/RCTBridge.h>
 #endif
+
+#include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/public/session.h"
 
 @interface RNTensorFlowGraphOperations : NSObject <RCTBridgeModule>
 
