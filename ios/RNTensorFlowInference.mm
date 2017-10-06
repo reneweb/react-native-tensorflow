@@ -182,7 +182,7 @@ RCT_EXPORT_METHOD(graph:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve
 
 RCT_EXPORT_METHOD(stats:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    resolve(@"");
+    resolve(@1);
 }
 
 RCT_EXPORT_METHOD(close:(NSString *)tId)
