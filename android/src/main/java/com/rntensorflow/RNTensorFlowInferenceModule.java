@@ -46,18 +46,12 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void feed(String id, String inputName, ReadableArray src) {
-    TensorFlowInferenceInterface inference = inferences.get(id);
-    if(inference != null) {
-      inference.feed(inputName, readableArrayToDoubleArray(src));
-    }
+    feedWithDims(id, inputName, src, new WritableNativeArray());
   }
 
   @ReactMethod
   public void run(String id, ReadableArray outputNames) {
-    TensorFlowInferenceInterface inference = inferences.get(id);
-    if(inference != null) {
-      inference.run(readableArrayToStringArray(outputNames));
-    }
+    runWithStatsFlag(id, outputNames, false);
   }
 
   @ReactMethod
