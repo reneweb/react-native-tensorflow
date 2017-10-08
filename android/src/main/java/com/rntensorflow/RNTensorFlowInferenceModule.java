@@ -27,38 +27,58 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
   @Override
   public void onCatalystInstanceDestroy() {
     for (String id : inferences.keySet()) {
-      this.close(id);
+      TensorFlowInferenceInterface inference = this.inferences.remove(id);
+      if(inference != null) {
+        inference.close();
+      }
     }
   }
 
   @ReactMethod
-  public void initTensorFlowInference(String id, String modelFilePath) {
-    inferences.put(id, new TensorFlowInferenceInterface(reactContext.getAssets(), modelFilePath));
-  }
-
-  @ReactMethod
-  public void feedWithDims(String id, String inputName, ReadableArray src, ReadableArray dims) {
-    TensorFlowInferenceInterface inference = inferences.get(id);
-    if(inference != null) {
-      inference.feed(inputName, readableArrayToDoubleArray(src), readableArrayToLongArray(dims));
+  public void initTensorFlowInference(String id, String modelFilePath, Promise promise) {
+    try {
+      inferences.put(id, new TensorFlowInferenceInterface(reactContext.getAssets(), modelFilePath));
+      promise.resolve(true);
+    } catch (Exception e) {
+      promise.reject(e);
     }
   }
 
   @ReactMethod
-  public void feed(String id, String inputName, ReadableArray src) {
-    feedWithDims(id, inputName, src, new WritableNativeArray());
+  public void feedWithDims(String id, String inputName, ReadableArray src, ReadableArray dims, Promise promise) {
+    try {
+      TensorFlowInferenceInterface inference = inferences.get(id);
+      if (inference != null) {
+        inference.feed(inputName, readableArrayToDoubleArray(src), readableArrayToLongArray(dims));
+      } else {
+        promise.reject(new IllegalStateException("Could not find inference for id"));
+      }
+    } catch (Exception e) {
+      promise.reject(e);
+    }
   }
 
   @ReactMethod
-  public void run(String id, ReadableArray outputNames) {
-    runWithStatsFlag(id, outputNames, false);
+  public void feed(String id, String inputName, ReadableArray src, Promise promise) {
+    feedWithDims(id, inputName, src, new WritableNativeArray(), promise);
   }
 
   @ReactMethod
-  public void runWithStatsFlag(String id, ReadableArray outputNames, boolean enableStats) {
-    TensorFlowInferenceInterface inference = inferences.get(id);
-    if(inference != null) {
-      inference.run(readableArrayToStringArray(outputNames), enableStats);
+  public void run(String id, ReadableArray outputNames, Promise promise) {
+    runWithStatsFlag(id, outputNames, false, promise);
+  }
+
+  @ReactMethod
+  public void runWithStatsFlag(String id, ReadableArray outputNames, boolean enableStats, Promise promise) {
+    try {
+      TensorFlowInferenceInterface inference = inferences.get(id);
+      if(inference != null) {
+        inference.run(readableArrayToStringArray(outputNames), enableStats);
+      } else {
+        promise.reject(new IllegalStateException("Could not find inference for id"));
+      }
+    } catch (Exception e) {
+      promise.reject(e);
     }
   }
 
@@ -97,10 +117,16 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void close(String id) {
-    TensorFlowInferenceInterface inference = this.inferences.remove(id);
-    if(inference != null) {
-      inference.close();
+  public void close(String id, Promise promise) {
+    try {
+      TensorFlowInferenceInterface inference = this.inferences.remove(id);
+      if(inference != null) {
+        inference.close();
+      } else {
+        promise.reject(new IllegalStateException("Could not find inference for id"));
+      }
+    } catch (Exception e) {
+      promise.reject(e);
     }
   }
 }

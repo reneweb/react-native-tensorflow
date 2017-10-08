@@ -28,9 +28,9 @@ public class RNTensorFlowGraphModule extends ReactContextBaseJavaModule {
 
     @Override
     public void onCatalystInstanceDestroy() {
-        for (String id : graphs.keySet()) {
-            close(id);
-        }
+        graphs.forEach((id, graph) -> {
+            graph.close();
+        });
     }
 
     public void init(String id, Graph graph) {
@@ -47,15 +47,18 @@ public class RNTensorFlowGraphModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void importGraphDef(String id, String graphDef) {
-        importGraphDefWithPrefix(id, graphDef, "");
+    public void importGraphDef(String id, String graphDef, Promise promise) {
+        importGraphDefWithPrefix(id, graphDef, "", promise);
     }
 
     @ReactMethod
-    public void importGraphDefWithPrefix(String id, String graphDef, String prefix) {
-        Graph graph = graphs.get(id);
-        if(graph != null) {
+    public void importGraphDefWithPrefix(String id, String graphDef, String prefix, Promise promise) {
+        try {
+            Graph graph = graphs.get(id);
             graph.importGraphDef(Base64.decode(graphDef, Base64.DEFAULT), prefix);
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject(e);
         }
     }
 
@@ -82,10 +85,13 @@ public class RNTensorFlowGraphModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void close(String id) {
-        Graph graph = graphs.get(id);
-        if(graph != null) {
+    public void close(String id, Promise promise) {
+        try {
+            Graph graph = graphs.get(id);
             graph.close();
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject(e);
         }
     }
 }
