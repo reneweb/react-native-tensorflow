@@ -156,7 +156,7 @@ RCT_EXPORT_METHOD(runWithStatsFlag:(NSString *)tId outputNames:(NSArray *)output
         fetchTensors[[tId UTF8String]] = outputs;
         resolve(@1);
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what());
+        reject(RCTErrorUnspecified, e.what(), nil);
     }
 }
 
@@ -184,7 +184,7 @@ RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName output
     
         delete tensor;
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what());
+        reject(RCTErrorUnspecified, e.what(), nil);
     }
 }
 
@@ -200,7 +200,7 @@ RCT_EXPORT_METHOD(graph:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve
             reject(RCTErrorUnspecified, @"Could not find graph with given id", nil);
         }
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what());
+        reject(RCTErrorUnspecified, e.what(), nil);
     }
 }
 
