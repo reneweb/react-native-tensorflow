@@ -220,9 +220,9 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../../../React/**",
 					"$(SRCROOT)/../../react-native/React/**",
-					"$(SRCROOT)/../ios/Pods/TensorFlow-experimental/Frameworks/tensorflow_experimental.framework/Headers",
-					"$(SRCROOT)/../ios/Pods/Headers/Public/TensorFlow-experimental/tensorflow_experimental/third_party/eigen3",
-					"$(SRCROOT)/../ios/Pods/TensorFlow-experimental/Frameworks/tensorflow_experimental.framework/Headers/third_party/eigen3",
+					"$(SRCROOT)/../../../ios/Pods/TensorFlow-experimental/Frameworks/tensorflow_experimental.framework/Headers",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/TensorFlow-experimental/tensorflow_experimental/third_party/eigen3",
+					"$(SRCROOT)/../../../ios/Pods/TensorFlow-experimental/Frameworks/tensorflow_experimental.framework/Headers/third_party/eigen3",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
@@ -239,9 +239,9 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../../../React/**",
 					"$(SRCROOT)/../../react-native/React/**",
-					"$(SRCROOT)/../ios/Pods/TensorFlow-experimental/Frameworks/tensorflow_experimental.framework/Headers",
-					"$(SRCROOT)/../ios/Pods/Headers/Public/TensorFlow-experimental/tensorflow_experimental/third_party/eigen3",
-					"$(SRCROOT)/../ios/Pods/TensorFlow-experimental/Frameworks/tensorflow_experimental.framework/Headers/third_party/eigen3",
+					"$(SRCROOT)/../../../ios/Pods/TensorFlow-experimental/Frameworks/tensorflow_experimental.framework/Headers",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/TensorFlow-experimental/tensorflow_experimental/third_party/eigen3",
+					"$(SRCROOT)/../../../ios/Pods/TensorFlow-experimental/Frameworks/tensorflow_experimental.framework/Headers/third_party/eigen3",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
