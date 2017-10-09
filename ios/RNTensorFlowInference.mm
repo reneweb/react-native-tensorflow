@@ -53,130 +53,154 @@ namespace {
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_METHOD(initTensorFlowInference:(NSString *)tId modelFilePath:(NSString *)modelFilePath)
+RCT_EXPORT_METHOD(initTensorFlowInference:(NSString *)tId modelFilePath:(NSString *)modelFilePath resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    tensorflow::GraphDef tensorflow_graph;
-    LOG(INFO) << "Graph created.";
+    try {
+        tensorflow::GraphDef tensorflow_graph;
+        LOG(INFO) << "Graph created.";
     
-    NSString* network_path = filePathForResource([modelFilePath substringToIndex:[modelFilePath length] - 3], @"pb");
-    fileToProto([network_path UTF8String], &tensorflow_graph);
+        NSString* network_path = filePathForResource([modelFilePath substringToIndex:[modelFilePath length] - 3], @"pb");
+        fileToProto([network_path UTF8String], &tensorflow_graph);
     
-    graphs[[tId UTF8String]] = tensorflow_graph;
+        graphs[[tId UTF8String]] = tensorflow_graph;
+        resolve(@1);
+    } catch( std::exception& e ) {
+        reject(RCTErrorUnspecified, e.what());
+    }
 }
 
-RCT_EXPORT_METHOD(feedWithDims:(NSString *)tId inputName:(NSString *)inputName src:(NSArray *)src dims:(NSArray *)dims)
+RCT_EXPORT_METHOD(feedWithDims:(NSString *)tId inputName:(NSString *)inputName src:(NSArray *)src dims:(NSArray *)dims resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    int dimsCount = [dims count];
-    std::vector<tensorflow::int64> dimsC(dimsCount);
-    for (int i = 0; i < dimsCount; ++i) {
-        dimsC[i] = [[dims objectAtIndex:i] intValue];
+    try {
+        int dimsCount = [dims count];
+        std::vector<tensorflow::int64> dimsC(dimsCount);
+        for (int i = 0; i < dimsCount; ++i) {
+            dimsC[i] = [[dims objectAtIndex:i] intValue];
+        }
+    
+        tensorflow::Tensor image_tensor(
+                                        tensorflow::DT_FLOAT,
+                                        tensorflow::TensorShape(dimsC));
+    
+        int srcCount = [src count];
+        std::vector<float> srcC(srcCount);
+        for (int i = 0; i < [src count]; ++i) {
+            srcC[i] = [[src objectAtIndex:i] floatValue];
+        }
+    
+        std::copy_n(srcC.begin(), srcC.size(), image_tensor.flat<float>().data());
+    
+        feedNames[[tId UTF8String]].push_back([inputName UTF8String]);
+        feedTensors[[tId UTF8String]].push_back(image_tensor);
+        resolve(@1);
+    } catch( std::exception& e ) {
+        reject(RCTErrorUnspecified, e.what());
     }
-    
-    tensorflow::Tensor image_tensor(
-                                    tensorflow::DT_FLOAT,
-                                    tensorflow::TensorShape(dimsC));
-    
-    int srcCount = [src count];
-    std::vector<float> srcC(srcCount);
-    for (int i = 0; i < [src count]; ++i) {
-        srcC[i] = [[src objectAtIndex:i] floatValue];
-    }
-    
-    std::copy_n(srcC.begin(), srcC.size(), image_tensor.flat<float>().data());
-    
-    feedNames[[tId UTF8String]].push_back([inputName UTF8String]);
-    feedTensors[[tId UTF8String]].push_back(image_tensor);
 }
 
-RCT_EXPORT_METHOD(feed:(NSString *)tId inputName:(NSString *)inputName src:(NSArray *)src)
+RCT_EXPORT_METHOD(feed:(NSString *)tId inputName:(NSString *)inputName src:(NSArray *)src resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    [self feedWithDims:tId inputName:inputName src:src dims:[NSArray new]];
+    [self feedWithDims:tId inputName:inputName src:src dims:[NSArray new] resolver:resolve rejecter:reject];
 }
 
-RCT_EXPORT_METHOD(run:(NSString *)tId outputNames:(NSArray *)outputNames)
+RCT_EXPORT_METHOD(run:(NSString *)tId outputNames:(NSArray *)outputNames resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    [self runWithStatsFlag:tId outputNames:outputNames enableStats:false];
+    [self runWithStatsFlag:tId outputNames:outputNames enableStats:false resolver:resolve rejecter:reject];
 }
 
-RCT_EXPORT_METHOD(runWithStatsFlag:(NSString *)tId outputNames:(NSArray *)outputNames enableStats:(bool)enableStats)
+RCT_EXPORT_METHOD(runWithStatsFlag:(NSString *)tId outputNames:(NSArray *)outputNames enableStats:(bool)enableStats resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    tensorflow::GraphDef tensorflow_graph = graphs[[tId UTF8String]];
+    try {
+        tensorflow::GraphDef tensorflow_graph = graphs[[tId UTF8String]];
     
-    tensorflow::SessionOptions options;
+        tensorflow::SessionOptions options;
     
-    tensorflow::Session* session_pointer = nullptr;
-    tensorflow::Status session_status = tensorflow::NewSession(options, &session_pointer);
-    if (!session_status.ok()) {
-        std::string status_string = session_status.ToString();
-        LOG(ERROR) << "Session create failed - " << status_string.c_str();
+        tensorflow::Session* session_pointer = nullptr;
+        tensorflow::Status session_status = tensorflow::NewSession(options, &session_pointer);
+        if (!session_status.ok()) {
+            std::string status_string = session_status.ToString();
+            throw std::runtime_error("Session create failed - " << status_string.c_str());
+        }
+        std::unique_ptr<tensorflow::Session> session(session_pointer);
+        LOG(INFO) << "Session created.";
+    
+        LOG(INFO) << "Creating session.";
+        tensorflow::Status s = session->Create(tensorflow_graph);
+        if (!s.ok()) {
+            throw std::runtime_error("Could not create TensorFlow Graph: " << s);
+        }
+    
+        std::vector<std::pair<std::string, tensorflow::Tensor>> feedC([outputNames count]);
+        for (int i = 0; i < [outputNames count]; ++i) {
+            feedC[i] = {[[outputNames objectAtIndex:i] UTF8String], feedTensors[[tId UTF8String]][i]};
+        }
+    
+        int outputNamesCount = [outputNames count];
+        std::vector<std::string> outputNamesC(outputNamesCount);
+        for (int i = 0; i < [outputNames count]; ++i) {
+            outputNamesC[i] = [[outputNames objectAtIndex:i] UTF8String];
+        }
+    
+        std::vector<tensorflow::Tensor> outputs;
+        tensorflow::Status run_status = session->Run(feedC, outputNamesC, {}, &outputs);
+    
+        if (!run_status.ok()) {
+            tensorflow::LogAllRegisteredKernels();
+            session->Close();
+            throw std::runtime_error("Running model failed: " << run_status);
+        }
+    
+        session->Close();
+    
+        fetchNames[[tId UTF8String]] = outputNamesC;
+        fetchTensors[[tId UTF8String]] = outputs;
+        resolve(@1);
+    } catch( std::exception& e ) {
+        reject(RCTErrorUnspecified, e.what());
     }
-    std::unique_ptr<tensorflow::Session> session(session_pointer);
-    LOG(INFO) << "Session created.";
-    
-    LOG(INFO) << "Creating session.";
-    tensorflow::Status s = session->Create(tensorflow_graph);
-    if (!s.ok()) {
-        LOG(ERROR) << "Could not create TensorFlow Graph: " << s;
-    }
-    
-    std::vector<std::pair<std::string, tensorflow::Tensor>> feedC([outputNames count]);
-    for (int i = 0; i < [outputNames count]; ++i) {
-        feedC[i] = {[[outputNames objectAtIndex:i] UTF8String], feedTensors[[tId UTF8String]][i]};
-    }
-    
-    int outputNamesCount = [outputNames count];
-    std::vector<std::string> outputNamesC(outputNamesCount);
-    for (int i = 0; i < [outputNames count]; ++i) {
-        outputNamesC[i] = [[outputNames objectAtIndex:i] UTF8String];
-    }
-    
-    std::vector<tensorflow::Tensor> outputs;
-    tensorflow::Status run_status = session->Run(feedC, outputNamesC, {}, &outputs);
-    
-    if (!run_status.ok()) {
-        LOG(ERROR) << "Running model failed: " << run_status;
-        tensorflow::LogAllRegisteredKernels();
-    }
-    
-    session->Close();
-    
-    fetchNames[[tId UTF8String]] = outputNamesC;
-    fetchTensors[[tId UTF8String]] = outputs;
 }
 
 RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName outputSize:(NSInteger *)outputSize resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    int i = 0;
-    tensorflow::Tensor *tensor;
-    for(auto n : fetchNames[[tId UTF8String]]) {
-        if (n == [outputName UTF8String]) {
-            tensor = &fetchTensors[[tId UTF8String]][i];
+    try {
+        int i = 0;
+        tensorflow::Tensor *tensor;
+        for(auto n : fetchNames[[tId UTF8String]]) {
+            if (n == [outputName UTF8String]) {
+                tensor = &fetchTensors[[tId UTF8String]][i];
+            }
+            ++i;
         }
-        ++i;
+        
+        auto predictions = tensor->flat<float>();
+        NSMutableArray * result = [NSMutableArray new];
+        for (int index = 0; index < predictions.size(); index += 1) {
+            [result addObject:@(predictions(index))];
+        }
+    
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+            resolve(result);
+        });
+    
+        delete tensor;
+    } catch( std::exception& e ) {
+        reject(RCTErrorUnspecified, e.what());
     }
-    
-    auto predictions = tensor->flat<float>();
-    NSMutableArray * result = [NSMutableArray new];
-    for (int index = 0; index < predictions.size(); index += 1) {
-        [result addObject:@(predictions(index))];
-    }
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        resolve(result);
-    });
-    
-    delete tensor;
 }
 
 RCT_EXPORT_METHOD(graph:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    auto tensorflow_graph = graphs.find([tId UTF8String]);
-    if(tensorflow_graph != graphs.end()) {
-        RNTensorFlowGraph * graphModule = [_bridge moduleForClass:[RNTensorFlowGraph class]];
-        [graphModule init:tId graph:tensorflow_graph->second];
-        resolve(@1);
-    } else {
-        reject(RCTErrorUnspecified, @"Could not find graph with given id", nil);
+    try {
+        auto tensorflow_graph = graphs.find([tId UTF8String]);
+        if(tensorflow_graph != graphs.end()) {
+            RNTensorFlowGraph * graphModule = [_bridge moduleForClass:[RNTensorFlowGraph class]];
+            [graphModule init:tId graph:tensorflow_graph->second];
+            resolve(@1);
+        } else {
+            reject(RCTErrorUnspecified, @"Could not find graph with given id", nil);
+        }
+    } catch( std::exception& e ) {
+        reject(RCTErrorUnspecified, e.what());
     }
 }
 
@@ -185,23 +209,28 @@ RCT_EXPORT_METHOD(stats:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve
     resolve(@1);
 }
 
-RCT_EXPORT_METHOD(close:(NSString *)tId)
+RCT_EXPORT_METHOD(close:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    feedNames.clear();
-    feedTensors.clear();
-    fetchNames.clear();
-    fetchTensors.clear();
+    try {
+        feedNames.clear();
+        feedTensors.clear();
+        fetchNames.clear();
+        fetchTensors.clear();
     
-    tensorflow::GraphDef tensorflow_graph = graphs[[tId UTF8String]];
-    RNTensorFlowGraph * graph = [self.bridge moduleForClass:[RNTensorFlowGraph class]];
-    [graph close:tId];
+        tensorflow::GraphDef tensorflow_graph = graphs[[tId UTF8String]];
+        RNTensorFlowGraph * graph = [self.bridge moduleForClass:[RNTensorFlowGraph class]];
+        [graph close:tId];
+        resolve(@1);
+    } catch( std::exception& e ) {
+        reject(RCTErrorUnspecified, e.what());
+    }
 }
 
 NSString* filePathForResource(NSString* name, NSString* extension) {
     NSString* file_path = [[NSBundle mainBundle] pathForResource:name ofType:extension];
     if (file_path == NULL) {
-        LOG(FATAL) << "Couldn't find '" << [name UTF8String] << "."
-	       << [extension UTF8String] << "' in bundle.";
+        throw std::invalid_argument("Couldn't find '" << [name UTF8String] << "."
+                                    << [extension UTF8String] << "' in bundle.");
     }
     return file_path;
 }
