@@ -38,7 +38,7 @@ RCT_EXPORT_METHOD(importGraphDefWithPrefix:(NSString *)tId graphDef:(NSString *)
             reject(RCTErrorUnspecified, @"Could not find graph with given id", nil);
         }
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what());
+        reject(RCTErrorUnspecified, @(e.what()), nil);
     }
 }
 
@@ -52,7 +52,7 @@ RCT_EXPORT_METHOD(toGraphDef:(NSString *)tId resolver:(RCTPromiseResolveBlock)re
             reject(RCTErrorUnspecified, @"Could not find graph with given id", nil);
         }
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what());
+        reject(RCTErrorUnspecified, @(e.what()), nil);
     }
 }
 
@@ -72,9 +72,8 @@ RCT_EXPORT_METHOD(close:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve
             reject(RCTErrorUnspecified, @"Could not find graph with given id", nil);
         }
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what());
+        reject(RCTErrorUnspecified, @(e.what()), nil);
     }
 }
 
 @end
-

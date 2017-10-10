@@ -65,7 +65,7 @@ RCT_EXPORT_METHOD(initTensorFlowInference:(NSString *)tId modelFilePath:(NSStrin
         graphs[[tId UTF8String]] = tensorflow_graph;
         resolve(@1);
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what());
+        reject(RCTErrorUnspecified, @(e.what()), nil);
     }
 }
 
@@ -94,7 +94,7 @@ RCT_EXPORT_METHOD(feedWithDims:(NSString *)tId inputName:(NSString *)inputName s
         feedTensors[[tId UTF8String]].push_back(image_tensor);
         resolve(@1);
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what());
+        reject(RCTErrorUnspecified, @(e.what()), nil);
     }
 }
 
@@ -119,7 +119,9 @@ RCT_EXPORT_METHOD(runWithStatsFlag:(NSString *)tId outputNames:(NSArray *)output
         tensorflow::Status session_status = tensorflow::NewSession(options, &session_pointer);
         if (!session_status.ok()) {
             std::string status_string = session_status.ToString();
-            throw std::runtime_error("Session create failed - " << status_string.c_str());
+            std::stringstream str;
+            str << "Session create failed - " << status_string.c_str();
+            throw std::runtime_error(str.str());
         }
         std::unique_ptr<tensorflow::Session> session(session_pointer);
         LOG(INFO) << "Session created.";
@@ -127,7 +129,9 @@ RCT_EXPORT_METHOD(runWithStatsFlag:(NSString *)tId outputNames:(NSArray *)output
         LOG(INFO) << "Creating session.";
         tensorflow::Status s = session->Create(tensorflow_graph);
         if (!s.ok()) {
-            throw std::runtime_error("Could not create TensorFlow Graph: " << s);
+            std::stringstream str;
+            str << "Could not create TensorFlow Graph: " << s;
+            throw std::runtime_error(str.str());
         }
     
         std::vector<std::pair<std::string, tensorflow::Tensor>> feedC([outputNames count]);
@@ -147,7 +151,9 @@ RCT_EXPORT_METHOD(runWithStatsFlag:(NSString *)tId outputNames:(NSArray *)output
         if (!run_status.ok()) {
             tensorflow::LogAllRegisteredKernels();
             session->Close();
-            throw std::runtime_error("Running model failed: " << run_status);
+            std::stringstream str;
+            str << "Running model failed: " << run_status;
+            throw std::runtime_error(str.str());
         }
     
         session->Close();
@@ -156,7 +162,7 @@ RCT_EXPORT_METHOD(runWithStatsFlag:(NSString *)tId outputNames:(NSArray *)output
         fetchTensors[[tId UTF8String]] = outputs;
         resolve(@1);
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what(), nil);
+        reject(RCTErrorUnspecified, @(e.what()), nil);
     }
 }
 
@@ -184,7 +190,7 @@ RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName output
     
         delete tensor;
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what(), nil);
+        reject(RCTErrorUnspecified, @(e.what()), nil);
     }
 }
 
@@ -200,7 +206,7 @@ RCT_EXPORT_METHOD(graph:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve
             reject(RCTErrorUnspecified, @"Could not find graph with given id", nil);
         }
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what(), nil);
+        reject(RCTErrorUnspecified, @(e.what()), nil);
     }
 }
 
@@ -222,15 +228,16 @@ RCT_EXPORT_METHOD(close:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve
         [graph close:tId];
         resolve(@1);
     } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, e.what());
+        reject(RCTErrorUnspecified, @(e.what()), nil);
     }
 }
 
 NSString* filePathForResource(NSString* name, NSString* extension) {
     NSString* file_path = [[NSBundle mainBundle] pathForResource:name ofType:extension];
     if (file_path == NULL) {
-        throw std::invalid_argument("Couldn't find '" << [name UTF8String] << "."
-                                    << [extension UTF8String] << "' in bundle.");
+        std::stringstream str;
+        str << "Couldn't find '" << [name UTF8String] << "." << [extension UTF8String] << "' in bundle.";
+        throw std::invalid_argument(str.str());
     }
     return file_path;
 }
