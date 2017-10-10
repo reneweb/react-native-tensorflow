@@ -45,11 +45,11 @@ class TensorFlowGraph {
   }
 
   importGraphDef(graphDef) {
-    RNTensorFlowGraph.importGraphDef(this.id, graphDef)
+    return RNTensorFlowGraph.importGraphDef(this.id, graphDef)
   }
 
   importGraphDefWithPrefix(graphDef, prefix) {
-    RNTensorFlowGraph.importGraphDefWithPrefix(this.id, graphDef, prefix);
+    return RNTensorFlowGraph.importGraphDefWithPrefix(this.id, graphDef, prefix);
   }
 
   toGraphDef() {
@@ -68,7 +68,7 @@ class TensorFlowGraph {
   }
 
   close() {
-    RNTensorFlowGraph.close(this.id)
+    return RNTensorFlowGraph.close(this.id)
   }
 }
 
@@ -76,30 +76,36 @@ class TensorFlowInference {
 
   constructor(modelFileName) {
     this.id = uuid()
-    RNTensorFlowInference.initTensorFlowInference(this.id, modelFileName)
+    this.init = RNTensorFlowInference.initTensorFlowInference(this.id, modelFileName)
   }
 
-  feedWithDims(inputName, src, dims) {
-    RNTensorFlowInference.feedWithDims(this.id, inputName, src, dims);
+  async feedWithDims(inputName, src, dims) {
+    await this.init
+    return RNTensorFlowInference.feedWithDims(this.id, inputName, src, dims);
   }
 
-  feed(inputName, src) {
-    RNTensorFlowInference.feed(this.id, inputName, src);
+  async feed(inputName, src) {
+    await this.init
+    return RNTensorFlowInference.feed(this.id, inputName, src);
   }
 
-  run(outputNames) {
-    RNTensorFlowInference.run(this.id, outputNames);
+  async run(outputNames) {
+    await this.init
+    return RNTensorFlowInference.run(this.id, outputNames);
   }
 
-  runWithStats(outputNames) {
-    RNTensorFlowInference.runWithStatsFlag(this.id, outputNames, true);
+  async runWithStats(outputNames) {
+    await this.init
+    return RNTensorFlowInference.runWithStatsFlag(this.id, outputNames, true);
   }
 
-  fetch(outputName, outputSize) {
+  async fetch(outputName, outputSize) {
+    await this.init
     return RNTensorFlowInference.fetch(this.id, outputName, outputSize);
   }
 
-  graph() {
+  async graph() {
+    await this.init
     const resultPromise = RNTensorFlowInference.graph(this.id)
     return resultPromise.then(result => {
       if(result) {
@@ -110,12 +116,14 @@ class TensorFlowInference {
     })
   }
 
-  stats() {
+  async stats() {
+    await this.init
     return RNTensorFlowInference.stats(this.id);
   }
 
-  close() {
-    RNTensorFlowInference.close(this.id);
+  async close() {
+    await this.init
+    return RNTensorFlowInference.close(this.id);
   }
 }
 
