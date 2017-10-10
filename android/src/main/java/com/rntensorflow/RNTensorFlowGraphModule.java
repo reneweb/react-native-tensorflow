@@ -10,6 +10,7 @@ import org.tensorflow.Operation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 public class RNTensorFlowGraphModule extends ReactContextBaseJavaModule {
 
@@ -28,9 +29,9 @@ public class RNTensorFlowGraphModule extends ReactContextBaseJavaModule {
 
     @Override
     public void onCatalystInstanceDestroy() {
-        graphs.forEach((id, graph) -> {
-            graph.close();
-        });
+        for (String key : graphs.keySet()) {
+            graphs.get(key).close();
+        }
     }
 
     public void init(String id, Graph graph) {
