@@ -15,11 +15,11 @@ namespace {
     public:
         explicit InputStream(const std::string& file_name) : ifstream_(file_name.c_str(), std::ios::in | std::ios::binary) {
         }
-        
+
         ~InputStream() {
             ifstream_.close();
         }
-        
+
         int Read(void* buffer, int size) {
             if (!ifstream_) {
                 return -1;
@@ -27,7 +27,7 @@ namespace {
             ifstream_.read(static_cast<char*>(buffer), size);
             return ifstream_.gcount();
         }
-        
+
     private:
         std::ifstream ifstream_;
     };
@@ -35,11 +35,12 @@ namespace {
 
 @implementation RNTensorFlowInference
 {
+    std::unordered_map<std::string, std::shared_ptr<tensorflow::Session>> sessions;
     std::unordered_map<std::string, tensorflow::GraphDef> graphs;
-    
+
     std::unordered_map<std::string, std::vector<std::string>> feedNames;
     std::unordered_map<std::string, std::vector<tensorflow::Tensor>> feedTensors;
-    
+
     std::unordered_map<std::string, std::vector<std::string>> fetchNames;
     std::unordered_map<std::string, std::vector<tensorflow::Tensor>> fetchTensors;
 }
@@ -58,10 +59,32 @@ RCT_EXPORT_METHOD(initTensorFlowInference:(NSString *)tId modelFilePath:(NSStrin
     try {
         tensorflow::GraphDef tensorflow_graph;
         LOG(INFO) << "Graph created.";
-    
+
         NSString* network_path = filePathForResource([modelFilePath substringToIndex:[modelFilePath length] - 3], @"pb");
         fileToProto([network_path UTF8String], &tensorflow_graph);
-    
+
+        tensorflow::SessionOptions options;
+
+        tensorflow::Session* session_pointer = nullptr;
+        tensorflow::Status session_status = tensorflow::NewSession(options, &session_pointer);
+        if (!session_status.ok()) {
+            std::string status_string = session_status.ToString();
+            std::stringstream str;
+            str << "Session create failed - " << status_string.c_str();
+            throw std::runtime_error(str.str());
+        }
+        std::shared_ptr<tensorflow::Session> session(session_pointer);
+        LOG(INFO) << "Session created.";
+
+        LOG(INFO) << "Creating session.";
+        tensorflow::Status s = session->Create(tensorflow_graph);
+        if (!s.ok()) {
+            std::stringstream str;
+            str << "Could not create TensorFlow Graph: " << s;
+            throw std::runtime_error(str.str());
+        }
+
+        sessions[[tId UTF8String]] = session;
         graphs[[tId UTF8String]] = tensorflow_graph;
         resolve(@1);
     } catch( std::exception& e ) {
@@ -77,19 +100,19 @@ RCT_EXPORT_METHOD(feedWithDims:(NSString *)tId inputName:(NSString *)inputName s
         for (int i = 0; i < dimsCount; ++i) {
             dimsC[i] = [[dims objectAtIndex:i] intValue];
         }
-    
+
         tensorflow::Tensor image_tensor(
                                         tensorflow::DT_FLOAT,
                                         tensorflow::TensorShape(dimsC));
-    
+
         int srcCount = [src count];
         std::vector<float> srcC(srcCount);
         for (int i = 0; i < [src count]; ++i) {
             srcC[i] = [[src objectAtIndex:i] floatValue];
         }
-    
+
         std::copy_n(srcC.begin(), srcC.size(), image_tensor.flat<float>().data());
-    
+
         feedNames[[tId UTF8String]].push_back([inputName UTF8String]);
         feedTensors[[tId UTF8String]].push_back(image_tensor);
         resolve(@1);
@@ -111,53 +134,30 @@ RCT_EXPORT_METHOD(run:(NSString *)tId outputNames:(NSArray *)outputNames resolve
 RCT_EXPORT_METHOD(runWithStatsFlag:(NSString *)tId outputNames:(NSArray *)outputNames enableStats:(bool)enableStats resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     try {
+        std::shared_ptr<tensorflow::Session> session = sessions[[tId UTF8String]];
         tensorflow::GraphDef tensorflow_graph = graphs[[tId UTF8String]];
-    
-        tensorflow::SessionOptions options;
-    
-        tensorflow::Session* session_pointer = nullptr;
-        tensorflow::Status session_status = tensorflow::NewSession(options, &session_pointer);
-        if (!session_status.ok()) {
-            std::string status_string = session_status.ToString();
-            std::stringstream str;
-            str << "Session create failed - " << status_string.c_str();
-            throw std::runtime_error(str.str());
-        }
-        std::unique_ptr<tensorflow::Session> session(session_pointer);
-        LOG(INFO) << "Session created.";
-    
-        LOG(INFO) << "Creating session.";
-        tensorflow::Status s = session->Create(tensorflow_graph);
-        if (!s.ok()) {
-            std::stringstream str;
-            str << "Could not create TensorFlow Graph: " << s;
-            throw std::runtime_error(str.str());
-        }
-    
+
         std::vector<std::pair<std::string, tensorflow::Tensor>> feedC([outputNames count]);
         for (int i = 0; i < [outputNames count]; ++i) {
             feedC[i] = {[[outputNames objectAtIndex:i] UTF8String], feedTensors[[tId UTF8String]][i]};
         }
-    
+
         int outputNamesCount = [outputNames count];
         std::vector<std::string> outputNamesC(outputNamesCount);
         for (int i = 0; i < [outputNames count]; ++i) {
             outputNamesC[i] = [[outputNames objectAtIndex:i] UTF8String];
         }
-    
+
         std::vector<tensorflow::Tensor> outputs;
         tensorflow::Status run_status = session->Run(feedC, outputNamesC, {}, &outputs);
-    
+
         if (!run_status.ok()) {
             tensorflow::LogAllRegisteredKernels();
-            session->Close();
             std::stringstream str;
             str << "Running model failed: " << run_status;
             throw std::runtime_error(str.str());
         }
-    
-        session->Close();
-    
+
         fetchNames[[tId UTF8String]] = outputNamesC;
         fetchTensors[[tId UTF8String]] = outputs;
         resolve(@1);
@@ -177,17 +177,17 @@ RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName output
             }
             ++i;
         }
-        
+
         auto predictions = tensor->flat<float>();
         NSMutableArray * result = [NSMutableArray new];
         for (int index = 0; index < predictions.size(); index += 1) {
             [result addObject:@(predictions(index))];
         }
-    
+
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             resolve(result);
         });
-    
+
         delete tensor;
     } catch( std::exception& e ) {
         reject(RCTErrorUnspecified, @(e.what()), nil);
@@ -218,14 +218,20 @@ RCT_EXPORT_METHOD(stats:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve
 RCT_EXPORT_METHOD(close:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     try {
-        feedNames.clear();
-        feedTensors.clear();
-        fetchNames.clear();
-        fetchTensors.clear();
-    
+        feedNames.erase([tId UTF8String]);
+        feedTensors.erase([tId UTF8String]);
+        fetchNames.erase([tId UTF8String]);
+        fetchTensors.erase([tId UTF8String]);
+
+        std::shared_ptr<tensorflow::Session> session = sessions[[tId UTF8String]];
+        session->Close();
+        sessions.erase([tId UTF8String]);
+
         tensorflow::GraphDef tensorflow_graph = graphs[[tId UTF8String]];
         RNTensorFlowGraph * graph = [self.bridge moduleForClass:[RNTensorFlowGraph class]];
         [graph close:tId];
+        graphs.erase([tId UTF8String]);
+
         resolve(@1);
     } catch( std::exception& e ) {
         reject(RCTErrorUnspecified, @(e.what()), nil);
@@ -251,4 +257,3 @@ bool fileToProto(const std::string& file_name, ::google::protobuf::MessageLite* 
 }
 
 @end
-
