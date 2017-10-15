@@ -39,7 +39,7 @@ import TensorFlow from 'react-native-tensorflow';
 
 const tf = new TensorFlow('tensorflow_inception_graph.pb')
 await tf.feed('inputName', [1,2,3,4,...])
-await tf.run('outputNames')
+await tf.run(['outputNames'])
 const output = await tf.fetch('outputName', 10)    
 console.log(output)
 
