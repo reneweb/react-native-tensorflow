@@ -1,6 +1,6 @@
 {
   "name": "react-native-tensorflow",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A TensorFlow inference library for react native",
   "main": "index.js",
   "author": "reweber",
