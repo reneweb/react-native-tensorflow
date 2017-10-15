@@ -10,7 +10,6 @@ import org.tensorflow.Operation;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 public class RNTensorFlowGraphModule extends ReactContextBaseJavaModule {
 
