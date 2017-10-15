@@ -35,13 +35,14 @@ Next you will need to feed an image in the form of a number array.
 Then run the inference and lastly fetch the result.
 
 ```javascript
-import TensorFlowInference from 'react-native-tensorflow';
+import TensorFlow from 'react-native-tensorflow';
 
+const tf = new TensorFlow('tensorflow_inception_graph.pb')
+await tf.feed('inputName', [1,2,3,4,...])
+await tf.run('outputNames')
+const output = await tf.fetch('outputName', 10)    
+console.log(output)
 
-const tensorflowInference = new TensorFlowInference('tensorflow_inception_graph.pb')
-tensorflowInference.feed('inputName', [1,2,3,4,...])
-tensorflowInference.run('outputNames')
-tensorflowInference.fetch('outputName', 10).then(output => console.log(output))
 ```
 
 Check the android TensorFlow example for more information on the API: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowImageClassifier.java
