@@ -18,6 +18,22 @@
     graphs[[tId UTF8String]] = graph;
 }
 
+- (const tensorflow::NodeDef&)operation:(NSString *)tId name:(NSString *)name
+{
+    auto graph = graphs.find([tId UTF8String]);
+    if(graph != graphs.end()) {
+        auto nodes = graph->second->node();
+        for(auto const& node: nodes) {
+            if(node.op() == [name UTF8String]) {
+                return node;
+            }
+        }
+    }
+
+    throw std::invalid_argument("Node / Operation with name not found");
+
+}
+
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(importGraphDef:(NSString *)tId graphDef:(NSString *)graphDef resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)

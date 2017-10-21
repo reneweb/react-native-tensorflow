@@ -212,7 +212,7 @@ RCT_EXPORT_METHOD(close:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve
         session->Close();
         sessions.erase([tId UTF8String]);
 
-        RNTensorFlowGraph * graph = [self.bridge moduleForClass:[RNTensorFlowGraph class]];
+        RNTensorFlowGraph * graph = [_bridge moduleForClass:[RNTensorFlowGraph class]];
         [graph close:tId];
 
         resolve(@1);

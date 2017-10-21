@@ -11,5 +11,6 @@
 
 -(void)init:(NSString *)tId graph:(std::shared_ptr<tensorflow::GraphDef>)graph;
 -(void)close:(NSString *)tId;
+-(const tensorflow::NodeDef&)operation:(NSString *)tId name:(NSString *)name;
 
 @end
