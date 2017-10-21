@@ -31,7 +31,7 @@ Then run `pod install`.
 First you need to put a model in the android/src/main/assets folder for Android
 and for iOS put the model using XCode in the root of the project.
 Then you can create an instance providing the file name of the model.
-Next you will need to feed an image in the form of a number array.
+Next you will need to feed your data as a number array.
 Then run the inference and lastly fetch the result.
 
 ```javascript
