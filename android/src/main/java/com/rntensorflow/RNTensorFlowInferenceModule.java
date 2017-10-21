@@ -38,6 +38,11 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
   public void initTensorFlowInference(String id, String modelFilePath, Promise promise) {
     try {
       inferences.put(id, new TensorFlowInferenceInterface(reactContext.getAssets(), modelFilePath));
+
+      TensorFlowInferenceInterface inference = inferences.get(id);
+      RNTensorFlowGraphModule graphModule = reactContext.getNativeModule(RNTensorFlowGraphModule.class);
+      graphModule.init(id, inference.graph());
+
       promise.resolve(true);
     } catch (Exception e) {
       promise.reject(e);
@@ -50,6 +55,7 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
       TensorFlowInferenceInterface inference = inferences.get(id);
       if (inference != null) {
         inference.feed(inputName, readableArrayToDoubleArray(src), readableArrayToLongArray(dims));
+        promise.resolve(true);
       } else {
         promise.reject(new IllegalStateException("Could not find inference for id"));
       }
@@ -74,6 +80,7 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
       TensorFlowInferenceInterface inference = inferences.get(id);
       if(inference != null) {
         inference.run(readableArrayToStringArray(outputNames), enableStats);
+        promise.resolve(true);
       } else {
         promise.reject(new IllegalStateException("Could not find inference for id"));
       }
@@ -95,18 +102,6 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void graph(String id, Promise promise) {
-    try {
-      TensorFlowInferenceInterface inference = inferences.get(id);
-      RNTensorFlowGraphModule graphModule = reactContext.getNativeModule(RNTensorFlowGraphModule.class);
-      graphModule.init(id, inference.graph());
-      promise.resolve(true);
-    } catch (Exception e) {
-      promise.reject(e);
-    }
-  }
-
-  @ReactMethod
   public void stats(String id, Promise promise) {
     try {
       TensorFlowInferenceInterface inference = inferences.get(id);
@@ -122,6 +117,7 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
       TensorFlowInferenceInterface inference = this.inferences.remove(id);
       if(inference != null) {
         inference.close();
+        promise.resolve(true);
       } else {
         promise.reject(new IllegalStateException("Could not find inference for id"));
       }

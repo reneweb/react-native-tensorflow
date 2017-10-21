@@ -49,22 +49,15 @@ class TensorFlowGraph {
   }
 
   importGraphDefWithPrefix(graphDef, prefix) {
-    return RNTensorFlowGraph.importGraphDefWithPrefix(this.id, graphDef, prefix);
+    return RNTensorFlowGraph.importGraphDefWithPrefix(this.id, graphDef, prefix)
   }
 
   toGraphDef() {
-    return RNTensorFlowGraph.toGraphDef(this.id);
+    return RNTensorFlowGraph.toGraphDef(this.id)
   }
 
   operation(name) {
-    const resultPromise = RNTensorFlowGraph.operation(this.id, name)
-    return resultPromise.then(result => {
-      if(result) {
-        return new TensorFlowOperation(this.id, name);
-      } else {
-        return Promise.reject(result)
-      }
-    })
+    return new TensorFlowOperation(this.id, name)
   }
 
   close() {
@@ -77,53 +70,47 @@ class TensorFlowInference {
   constructor(modelFileName) {
     this.id = uuid()
     this.init = RNTensorFlowInference.initTensorFlowInference(this.id, modelFileName)
+    this.tfGraph = new TensorFlowGraph(this.id)
   }
 
   async feedWithDims(inputName, src, dims) {
     await this.init
-    return RNTensorFlowInference.feedWithDims(this.id, inputName, src, dims);
+    return RNTensorFlowInference.feedWithDims(this.id, inputName, src, dims)
   }
 
   async feed(inputName, src) {
     await this.init
-    return RNTensorFlowInference.feed(this.id, inputName, src);
+    return RNTensorFlowInference.feed(this.id, inputName, src)
   }
 
   async run(outputNames) {
     await this.init
-    return RNTensorFlowInference.run(this.id, outputNames);
+    return RNTensorFlowInference.run(this.id, outputNames)
   }
 
   async runWithStats(outputNames) {
     await this.init
-    return RNTensorFlowInference.runWithStatsFlag(this.id, outputNames, true);
+    return RNTensorFlowInference.runWithStatsFlag(this.id, outputNames, true)
   }
 
   async fetch(outputName, outputSize) {
     await this.init
-    return RNTensorFlowInference.fetch(this.id, outputName, outputSize);
+    return RNTensorFlowInference.fetch(this.id, outputName, outputSize)
   }
 
   async graph() {
     await this.init
-    const resultPromise = RNTensorFlowInference.graph(this.id)
-    return resultPromise.then(result => {
-      if(result) {
-        return new TensorFlowGraph(this.id);
-      } else {
-        return Promise.reject(result)
-      }
-    })
+    return this.tfGraph
   }
 
   async stats() {
     await this.init
-    return RNTensorFlowInference.stats(this.id);
+    return RNTensorFlowInference.stats(this.id)
   }
 
   async close() {
     await this.init
-    return RNTensorFlowInference.close(this.id);
+    return RNTensorFlowInference.close(this.id)
   }
 }
 

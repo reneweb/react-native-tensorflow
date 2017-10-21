@@ -73,18 +73,6 @@ public class RNTensorFlowGraphModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void operation(String id, String name, Promise promise) {
-        try {
-            RNTensorFlowGraphOperationsModule operationsModule =
-                    reactContext.getNativeModule(RNTensorFlowGraphOperationsModule.class);
-            operationsModule.init();
-            promise.resolve(true);
-        } catch (Exception e) {
-            promise.reject(e);
-        }
-    }
-
-    @ReactMethod
     public void close(String id, Promise promise) {
         try {
             Graph graph = graphs.get(id);

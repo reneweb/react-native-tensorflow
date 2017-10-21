@@ -36,7 +36,6 @@ namespace {
 @implementation RNTensorFlowInference
 {
     std::unordered_map<std::string, std::shared_ptr<tensorflow::Session>> sessions;
-    std::unordered_map<std::string, tensorflow::GraphDef> graphs;
 
     std::unordered_map<std::string, std::vector<std::string>> feedNames;
     std::unordered_map<std::string, std::vector<tensorflow::Tensor>> feedTensors;
@@ -85,7 +84,10 @@ RCT_EXPORT_METHOD(initTensorFlowInference:(NSString *)tId modelFilePath:(NSStrin
         }
 
         sessions[[tId UTF8String]] = session;
-        graphs[[tId UTF8String]] = tensorflow_graph;
+
+        RNTensorFlowGraph * graphModule = [_bridge moduleForClass:[RNTensorFlowGraph class]];
+        [graphModule init:tId graph:std::make_shared<tensorflow::GraphDef>(tensorflow_graph)];
+
         resolve(@1);
     } catch( std::exception& e ) {
         reject(RCTErrorUnspecified, @(e.what()), nil);
@@ -135,7 +137,6 @@ RCT_EXPORT_METHOD(runWithStatsFlag:(NSString *)tId outputNames:(NSArray *)output
 {
     try {
         std::shared_ptr<tensorflow::Session> session = sessions[[tId UTF8String]];
-        tensorflow::GraphDef tensorflow_graph = graphs[[tId UTF8String]];
 
         std::vector<std::pair<std::string, tensorflow::Tensor>> feedC([outputNames count]);
         for (int i = 0; i < [outputNames count]; ++i) {
@@ -194,22 +195,6 @@ RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName output
     }
 }
 
-RCT_EXPORT_METHOD(graph:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-{
-    try {
-        auto tensorflow_graph = graphs.find([tId UTF8String]);
-        if(tensorflow_graph != graphs.end()) {
-            RNTensorFlowGraph * graphModule = [_bridge moduleForClass:[RNTensorFlowGraph class]];
-            [graphModule init:tId graph:tensorflow_graph->second];
-            resolve(@1);
-        } else {
-            reject(RCTErrorUnspecified, @"Could not find graph with given id", nil);
-        }
-    } catch( std::exception& e ) {
-        reject(RCTErrorUnspecified, @(e.what()), nil);
-    }
-}
-
 RCT_EXPORT_METHOD(stats:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     resolve(@1);
@@ -227,10 +212,8 @@ RCT_EXPORT_METHOD(close:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve
         session->Close();
         sessions.erase([tId UTF8String]);
 
-        tensorflow::GraphDef tensorflow_graph = graphs[[tId UTF8String]];
         RNTensorFlowGraph * graph = [self.bridge moduleForClass:[RNTensorFlowGraph class]];
         [graph close:tId];
-        graphs.erase([tId UTF8String]);
 
         resolve(@1);
     } catch( std::exception& e ) {

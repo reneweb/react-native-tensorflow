@@ -16,8 +16,6 @@ public class RNTensorFlowGraphOperationsModule extends ReactContextBaseJavaModul
         return "RNTensorFlowGraphOperations";
     }
 
-    public void init() {}
-
     @ReactMethod
     public void inputListLength(String id, String opName, String name, Promise promise) {
         try {

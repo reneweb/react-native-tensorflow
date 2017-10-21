@@ -9,7 +9,7 @@
 
 @interface RNTensorFlowGraph : NSObject <RCTBridgeModule>
 
--(void)init:(NSString *)tId graph:(tensorflow::GraphDef)graph;
+-(void)init:(NSString *)tId graph:(std::shared_ptr<tensorflow::GraphDef>)graph;
 -(void)close:(NSString *)tId;
 
 @end
