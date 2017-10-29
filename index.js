@@ -73,14 +73,9 @@ class TensorFlowInference {
     this.tfGraph = new TensorFlowGraph(this.id)
   }
 
-  async feedWithDims(inputName, src, dims) {
+  async feed(data) {
     await this.init
-    return RNTensorFlowInference.feedWithDims(this.id, inputName, src, dims)
-  }
-
-  async feed(inputName, src) {
-    await this.init
-    return RNTensorFlowInference.feed(this.id, inputName, src)
+    return RNTensorFlowInference.feed(this.id, data)
   }
 
   async run(outputNames) {

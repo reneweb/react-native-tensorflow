@@ -2,8 +2,10 @@
 package com.rntensorflow;
 
 import com.facebook.react.bridge.*;
+import org.tensorflow.DataType;
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
+import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,11 +52,39 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void feedWithDims(String id, String inputName, ReadableArray src, ReadableArray dims, Promise promise) {
+  public void feed(String id, ReadableMap data, Promise promise) {
     try {
+      String inputName = data.getString("name");
+      long[] shape = data.hasKey("shape") ? readableArrayToLongArray(data.getArray("shape")) : new long[0];
+
+      DataType dtype = data.hasKey("dtype")
+              ? DataType.valueOf(data.getString("dtype").toUpperCase())
+              : DataType.DOUBLE;
+
       TensorFlowInferenceInterface inference = inferences.get(id);
       if (inference != null) {
-        inference.feed(inputName, readableArrayToDoubleArray(src), readableArrayToLongArray(dims));
+        if(dtype == DataType.DOUBLE) {
+          double[] srcData = readableArrayToDoubleArray(data.getArray("data"));
+          inference.feed(inputName, srcData, shape);
+        } else if(dtype == DataType.FLOAT) {
+          float[] srcData = readableArrayToFloatArray(data.getArray("data"));
+          inference.feed(inputName, srcData, shape);
+        } else if(dtype == DataType.INT32) {
+          int[] srcData = readableArrayToIntArray(data.getArray("data"));
+          inference.feed(inputName, srcData, shape);
+        } else if(dtype == DataType.INT64) {
+          double[] srcData = readableArrayToDoubleArray(data.getArray("data"));
+          inference.feed(inputName, srcData, shape);
+        } else if(dtype == DataType.UINT8) {
+          int[] srcData = readableArrayToIntArray(data.getArray("data"));
+          inference.feed(inputName, srcData, shape);
+        } else if(dtype == DataType.BOOL) {
+          byte[] srcData = readableArrayToByteBoolArray(data.getArray("data"));
+          inference.feed(inputName, srcData, shape);
+        } else if(dtype == DataType.STRING) {
+          byte[] srcData = readableArrayToByteStringArray(data.getArray("data"));
+          inference.feed(inputName, srcData, shape);
+        }
         promise.resolve(true);
       } else {
         promise.reject(new IllegalStateException("Could not find inference for id"));
@@ -62,11 +92,6 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
     } catch (Exception e) {
       promise.reject(e);
     }
-  }
-
-  @ReactMethod
-  public void feed(String id, String inputName, ReadableArray src, Promise promise) {
-    feedWithDims(id, inputName, src, new WritableNativeArray(), promise);
   }
 
   @ReactMethod
