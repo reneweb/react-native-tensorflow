@@ -184,12 +184,7 @@ RCT_EXPORT_METHOD(feed:(NSString *)tId data:(NSDictionary *)data resolver:(RCTPr
     }
 }
 
-RCT_EXPORT_METHOD(run:(NSString *)tId outputNames:(NSArray *)outputNames resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-{
-    [self runWithStatsFlag:tId outputNames:outputNames enableStats:false resolver:resolve rejecter:reject];
-}
-
-RCT_EXPORT_METHOD(runWithStatsFlag:(NSString *)tId outputNames:(NSArray *)outputNames enableStats:(bool)enableStats resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(run:(NSString *)tId outputNames:(NSArray *)outputNames enableStats:(bool)enableStats resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     try {
         std::shared_ptr<tensorflow::Session> session = sessions[[tId UTF8String]];

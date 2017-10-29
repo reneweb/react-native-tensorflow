@@ -95,12 +95,7 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void run(String id, ReadableArray outputNames, Promise promise) {
-    runWithStatsFlag(id, outputNames, false, promise);
-  }
-
-  @ReactMethod
-  public void runWithStatsFlag(String id, ReadableArray outputNames, boolean enableStats, Promise promise) {
+  public void run(String id, ReadableArray outputNames, boolean enableStats, Promise promise) {
     try {
       TensorFlowInferenceInterface inference = inferences.get(id);
       if(inference != null) {
