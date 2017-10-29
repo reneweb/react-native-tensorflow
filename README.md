@@ -38,7 +38,7 @@ Then run the inference and lastly fetch the result.
 import TensorFlow from 'react-native-tensorflow';
 
 const tf = new TensorFlow('tensorflow_inception_graph.pb')
-await tf.feed('inputName', [1,2,3,4,...])
+await tf.feed({name: "inputName", data: [1,2,3], shape:[1,2,4], dtype: "int64"})
 await tf.run(['outputNames'])
 const output = await tf.fetch('outputName', 10)    
 console.log(output)
@@ -46,3 +46,12 @@ console.log(output)
 ```
 
 Check the android TensorFlow example for more information on the API: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowImageClassifier.java
+
+### Supported data types
+- DOUBLE
+- FLOAT
+- INT32
+- INT64
+- UINT8
+- BOOL - On Android will be converted into a byte array
+- STRING - On Android will be converted into a byte array
