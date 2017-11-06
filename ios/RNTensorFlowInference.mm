@@ -218,7 +218,7 @@ RCT_EXPORT_METHOD(run:(NSString *)tId outputNames:(NSArray *)outputNames enableS
     }
 }
 
-RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName outputSize:(NSInteger *)outputSize resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     try {
         int i = 0;
@@ -244,11 +244,6 @@ RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName output
     } catch( std::exception& e ) {
         reject(RCTErrorUnspecified, @(e.what()), nil);
     }
-}
-
-RCT_EXPORT_METHOD(stats:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-{
-    resolve(@1);
 }
 
 RCT_EXPORT_METHOD(close:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)

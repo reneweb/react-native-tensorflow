@@ -83,19 +83,14 @@ class TensorFlowInference {
     return RNTensorFlowInference.run(this.id, outputNames, withStats !== undefined ? withStats : false)
   }
 
-  async fetch(outputName, outputSize) {
+  async fetch(outputName) {
     await this.init
-    return RNTensorFlowInference.fetch(this.id, outputName, outputSize)
+    return RNTensorFlowInference.fetch(this.id, outputName)
   }
 
   async graph() {
     await this.init
     return this.tfGraph
-  }
-
-  async stats() {
-    await this.init
-    return RNTensorFlowInference.stats(this.id)
   }
 
   async close() {
