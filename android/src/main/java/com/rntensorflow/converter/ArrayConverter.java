@@ -33,6 +33,42 @@ public class ArrayConverter {
         return arr;
     }
 
+    public static float[] readableArrayToFloatArray(ReadableArray readableArray) {
+        float[] arr = new float[readableArray.size()];
+        for (int i = 0; i < readableArray.size(); i++) {
+            arr[i] = (float)readableArray.getDouble(i);
+        }
+
+        return arr;
+    }
+
+    public static int[] readableArrayToIntArray(ReadableArray readableArray) {
+        int[] arr = new int[readableArray.size()];
+        for (int i = 0; i < readableArray.size(); i++) {
+            arr[i] = readableArray.getInt(i);
+        }
+
+        return arr;
+    }
+
+    public static byte[] readableArrayToByteBoolArray(ReadableArray readableArray) {
+        byte[] arr = new byte[readableArray.size()];
+        for (int i = 0; i < readableArray.size(); i++) {
+            arr[i] = (byte)(readableArray.getBoolean(i) ? 1 : 0);
+        }
+
+        return arr;
+    }
+
+    public static byte[] readableArrayToByteStringArray(ReadableArray readableArray) {
+        byte[] arr = new byte[readableArray.size()];
+        for (int i = 0; i < readableArray.size(); i++) {
+            arr[i] = Byte.valueOf(readableArray.getString(i));
+        }
+
+        return arr;
+    }
+
     public static ReadableArray stringArrayToReadableArray(String[] arr) {
         WritableArray writableArray = new WritableNativeArray();
         for (int i = 0; i < arr.length; i++) {
