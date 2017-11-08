@@ -184,14 +184,15 @@ RCT_EXPORT_METHOD(feed:(NSString *)tId data:(NSDictionary *)data resolver:(RCTPr
     }
 }
 
-RCT_EXPORT_METHOD(run:(NSString *)tId outputNames:(NSArray *)outputNames enableStats:(bool)enableStats resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(run:(NSString *)tId outputNames:(NSArray *)outputNames enableStats:(BOOL)enableStats resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     try {
         std::shared_ptr<tensorflow::Session> session = sessions[[tId UTF8String]];
 
-        std::vector<std::pair<std::string, tensorflow::Tensor>> feedC([outputNames count]);
-        for (int i = 0; i < [outputNames count]; ++i) {
-            feedC[i] = {[[outputNames objectAtIndex:i] UTF8String], feedTensors[[tId UTF8String]][i]};
+        std::vector<std::string> feedNamesForSession = feedNames[[tId UTF8String]];
+        std::vector<std::pair<std::string, tensorflow::Tensor>> feedC(feedNamesForSession.size());
+        for (int i = 0; i < feedNamesForSession.size(); ++i) {
+            feedC[i] = {feedNamesForSession[i], feedTensors[[tId UTF8String]][i]};
         }
 
         int outputNamesCount = [outputNames count];
@@ -230,11 +231,7 @@ RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName resolv
             ++i;
         }
 
-        auto predictions = tensor->flat<float>();
-        NSMutableArray * result = [NSMutableArray new];
-        for (int index = 0; index < predictions.size(); index += 1) {
-            [result addObject:@(predictions(index))];
-        }
+        NSArray *result = convertFetchResult(tensor);
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             resolve(result);
@@ -244,6 +241,69 @@ RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName resolv
     } catch( std::exception& e ) {
         reject(RCTErrorUnspecified, @(e.what()), nil);
     }
+}
+
+NSArray* convertFetchResult(tensorflow::Tensor *tensor) {
+    if(tensor->dtype() == tensorflow::DataType::DT_DOUBLE) {
+        auto predictions = tensor->flat<double>();
+        NSMutableArray * result = [NSMutableArray new];
+        for (int index = 0; index < predictions.size(); index += 1) {
+            [result addObject:[NSNumber numberWithDouble:predictions(index)]];
+        }
+
+        return result;
+    } else if(tensor->dtype() == tensorflow::DataType::DT_FLOAT) {
+        auto predictions = tensor->flat<float>();
+        NSMutableArray * result = [NSMutableArray new];
+        for (int index = 0; index < predictions.size(); index += 1) {
+            [result addObject:[NSNumber numberWithFloat:predictions(index)]];
+        }
+
+        return result;
+    } else if(tensor->dtype() == tensorflow::DataType::DT_INT32) {
+        auto predictions = tensor->flat<tensorflow::int32>();
+        NSMutableArray * result = [NSMutableArray new];
+        for (int index = 0; index < predictions.size(); index += 1) {
+            [result addObject:[NSNumber numberWithInt:predictions(index)]];
+        }
+
+        return result;
+    } else if(tensor->dtype() == tensorflow::DataType::DT_INT64) {
+        auto predictions = tensor->flat<tensorflow::int64>();
+        NSMutableArray * result = [NSMutableArray new];
+        for (int index = 0; index < predictions.size(); index += 1) {
+            [result addObject:[NSNumber numberWithLong:predictions(index)]];
+        }
+
+        return result;
+    } else if(tensor->dtype() == tensorflow::DataType::DT_UINT8) {
+        auto predictions = tensor->flat<tensorflow::uint8>();
+        NSMutableArray * result = [NSMutableArray new];
+        for (int index = 0; index < predictions.size(); index += 1) {
+            [result addObject:[NSNumber numberWithInt:predictions(index)]];
+        }
+
+        return result;
+    } else if(tensor->dtype() == tensorflow::DataType::DT_BOOL) {
+        auto predictions = tensor->flat<bool>();
+        NSMutableArray * result = [NSMutableArray new];
+        for (int index = 0; index < predictions.size(); index += 1) {
+            [result addObject:predictions(index) == true ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO]];
+        }
+
+        return result;
+    } else if(tensor->dtype() == tensorflow::DataType::DT_STRING) {
+        auto predictions = tensor->flat<tensorflow::string>();
+        NSMutableArray * result = [NSMutableArray new];
+        for (int index = 0; index < predictions.size(); index += 1) {
+            [result addObject:[NSString stringWithUTF8String:predictions(index).c_str()]];
+        }
+
+        return result;
+    } else {
+        throw std::invalid_argument("Invalid data type");
+    }
+
 }
 
 RCT_EXPORT_METHOD(close:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)

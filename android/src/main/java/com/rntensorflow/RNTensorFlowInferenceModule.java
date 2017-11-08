@@ -115,6 +115,9 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
         } else if(dtype == DataType.STRING) {
           byte[] srcData = readableArrayToByteStringArray(data.getArray("data"));
           tfContext.runner.feed(inputName, Tensor.create(dtype, shape, ByteBuffer.wrap(srcData)));
+        } else {
+          promise.reject(new IllegalArgumentException("Data type is not supported"));
+          return;
         }
         promise.resolve(true);
       } else {
@@ -157,10 +160,34 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
 
       Tensor tensor = tfContext.outputTensors.get(outputName);
       int numElements = tensor.numElements();
-      DoubleBuffer dst = DoubleBuffer.allocate(numElements);
-      tensor.writeTo(dst);
 
-      promise.resolve(doubleArrayToReadableArray(dst.array()));
+      if(tensor.dataType() == DataType.DOUBLE) {
+        DoubleBuffer dst = DoubleBuffer.allocate(numElements);
+        tensor.writeTo(dst);
+        promise.resolve(doubleArrayToReadableArray(dst.array()));
+      } else if(tensor.dataType() == DataType.FLOAT) {
+        FloatBuffer dst = FloatBuffer.allocate(numElements);
+        tensor.writeTo(dst);
+        promise.resolve(floatArrayToReadableArray(dst.array()));
+      } else if(tensor.dataType() == DataType.INT32) {
+        IntBuffer dst = IntBuffer.allocate(numElements);
+        tensor.writeTo(dst);
+        promise.resolve(intArrayToReadableArray(dst.array()));
+      } else if(tensor.dataType() == DataType.INT64) {
+        DoubleBuffer dst = DoubleBuffer.allocate(numElements);
+        tensor.writeTo(dst);
+        promise.resolve(doubleArrayToReadableArray(dst.array()));
+      } else if(tensor.dataType() == DataType.UINT8) {
+        IntBuffer dst = IntBuffer.allocate(numElements);
+        tensor.writeTo(dst);
+        promise.resolve(intArrayToReadableArray(dst.array()));
+      } else if(tensor.dataType() == DataType.BOOL) {
+        ByteBuffer dst = ByteBuffer.allocate(numElements);
+        tensor.writeTo(dst);
+        promise.resolve(byteArrayToBoolReadableArray(dst.array()));
+      } else {
+        promise.reject(new IllegalArgumentException("Data type is not supported"));
+      }
     } catch (Exception e) {
       promise.reject(e);
     }
