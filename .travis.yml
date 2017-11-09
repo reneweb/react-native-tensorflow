@@ -1,0 +1,23 @@
+language: android
+sudo: required
+jdk: oraclejdk8
+os: linux
+
+before_cache:
+ - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+ - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+ directories:
+ - $HOME/.gradle/caches/
+ - $HOME/.gradle/wrapper/
+
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-26.0.1
+    - android-23
+    - sys-img-armeabi-v7a-android-22
+script:
+  - cd android && ./gradlew assembleDebug
