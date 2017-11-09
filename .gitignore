@@ -50,6 +50,4 @@ proguard/
 .navigation/
 captures/
 *.iml
-gradle/
-gradlew
 gradlew.bat
