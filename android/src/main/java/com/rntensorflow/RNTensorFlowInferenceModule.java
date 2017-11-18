@@ -70,9 +70,7 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
   }
 
   private TfContext createContext(String model) throws IOException {
-    InputStream inputStream = new ResourceManager(reactContext.getAssets()).loadResource(model);
-    byte[] b = new byte[inputStream.available()];
-    inputStream.read(b);
+    byte[] b = new ResourceManager(reactContext.getAssets()).loadResource(model);
 
     Graph graph = new Graph();
     graph.importGraphDef(b);

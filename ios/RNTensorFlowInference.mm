@@ -53,14 +53,24 @@ namespace {
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_METHOD(initTensorFlowInference:(NSString *)tId modelFilePath:(NSString *)modelFilePath resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(initTensorFlowInference:(NSString *)tId modelLocation:(NSString *)modelLocation resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     try {
         tensorflow::GraphDef tensorflow_graph;
         LOG(INFO) << "Graph created.";
 
-        NSString* network_path = filePathForResource([modelFilePath substringToIndex:[modelFilePath length] - 3], @"pb");
-        fileToProto([network_path UTF8String], &tensorflow_graph);
+        NSURL *url = [NSURL URLWithString:modelLocation];
+        if (url && url.scheme && url.host) {
+            NSData *data = [NSData dataWithContentsOfURL:url];
+
+            const void *buf = [data bytes];
+            unsigned long numBytes = [data length];
+
+            tensorflow_graph.ParseFromArray(buf, numBytes);
+        } else {
+            NSString* network_path = filePathForResource([modelLocation substringToIndex:[modelLocation length] - 3], @"pb");
+            fileToProto([network_path UTF8String], &tensorflow_graph);
+        }
 
         tensorflow::SessionOptions options;
 

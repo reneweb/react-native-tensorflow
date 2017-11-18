@@ -1,6 +1,10 @@
 package com.rntensorflow;
 
 import android.content.res.AssetManager;
+import android.webkit.URLUtil;
+import com.facebook.react.modules.network.OkHttpClientProvider;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,15 +19,39 @@ public class ResourceManager {
         this.assetManager = assetManager;
     }
 
-    public InputStream loadResource(String resource) {
+    public byte[] loadResource(String resource) {
+        if(URLUtil.isValidUrl(resource)) {
+            return loadFromUrl(resource);
+        } else {
+            return loadFromLocal(resource);
+        }
+    }
+
+    private byte[] loadFromLocal(String resource) {
         try {
-            return assetManager.open(resource);
+            InputStream inputStream = assetManager.open(resource);
+            byte[] b = new byte[inputStream.available()];
+            inputStream.read(b);
+            return b;
         } catch (IOException e) {
             try {
-                return new FileInputStream(resource);
-            } catch (FileNotFoundException e1) {
+                InputStream inputStream = new FileInputStream(resource);
+                byte[] b = new byte[inputStream.available()];
+                inputStream.read(b);
+                return b;
+            } catch (IOException e1) {
                 throw new IllegalArgumentException("Could not load resource");
             }
+        }
+    }
+
+    private byte[] loadFromUrl(String url) {
+        try {
+            Request request = new Request.Builder().url(url).get().build();
+            Response response = OkHttpClientProvider.createClient().newCall(request).execute();
+            return response.body().bytes();
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not fetch data from url " + url);
         }
     }
 }

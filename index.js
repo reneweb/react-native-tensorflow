@@ -1,5 +1,5 @@
 
-import { NativeModules } from 'react-native';
+import { NativeModules, Image } from 'react-native';
 import uuid from 'uuid/v1';
 
 const { RNTensorFlowInference, RNTensorFlowGraph, RNTensorFlowGraphOperations } = NativeModules;
@@ -67,9 +67,12 @@ class TensorFlowGraph {
 
 class TensorFlowInference {
 
-  constructor(modelFileName) {
+  constructor(modelLocation) {
     this.id = uuid()
-    this.init = RNTensorFlowInference.initTensorFlowInference(this.id, modelFileName)
+    const resolvedModelLocation = Image.resolveAssetSource(modelLocation) != null
+      ? Image.resolveAssetSource(modelLocation).uri
+      : modelLocation
+    this.init = RNTensorFlowInference.initTensorFlowInference(this.id, resolvedModelLocation)
     this.tfGraph = new TensorFlowGraph(this.id)
   }
 
