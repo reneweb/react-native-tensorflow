@@ -28,10 +28,29 @@ Then run `pod install`.
 
 ## Usage
 
-First you need to put a model in the android/src/main/assets folder for Android
-and for iOS put the model using XCode in the root of the project.
-Then you can create an instance providing the file name of the model.
-Next you will need to feed your data as a number array.
+First you need to add the TensorFlow model to the project. There are a few ways to do that:
+
+- Add as react native asset
+Create the file `rn-cli.config.js` in the root of the project and at the following content in order for react native to bundle the model (ending with pb).
+```
+module.exports = {
+  getAssetExts() {
+    return ['pb']
+  }
+}
+```
+Then you can require the asset in the code, for example: `require('assets/tensorflow_inception_graph.pb')`
+
+- Add as iOS / Android asset
+Put the model in the android/src/main/assets folder for Android and for iOS put the model using XCode in the root of the project. In the code you can just reference the file path for the asset.
+
+- Load from file system
+Put the model file into the file system and reference using the file path.
+
+- Fetch via url
+Pass a url to fetch the model from a url. This won't store it locally, thus the next time the code is executed it will fetch it again.
+
+After adding the model and creating a TensorFlow instance using the model you will need to feed your data as a array providing the input name, shape and data type.
 Then run the inference and lastly fetch the result.
 
 ```javascript
