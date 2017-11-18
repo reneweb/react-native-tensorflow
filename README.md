@@ -59,7 +59,7 @@ import TensorFlow from 'react-native-tensorflow';
 const tf = new TensorFlow('tensorflow_inception_graph.pb')
 await tf.feed({name: "inputName", data: [1,2,3], shape:[1,2,4], dtype: "int64"})
 await tf.run(['outputNames'])
-const output = await tf.fetch('outputName', 10)    
+const output = await tf.fetch('outputName')    
 console.log(output)
 
 ```
@@ -74,3 +74,8 @@ Check the android TensorFlow example for more information on the API: https://gi
 - UINT8
 - BOOL - On Android will be converted into a byte array
 - STRING - On Android will be converted into a byte array
+
+
+### Known issues
+- Currently the data to feed to TensorFlow needs to be provided on the JS side and is then passed to the native side. Transferring large payloads this way is very inefficient and will likely have a negative performance impact. The same problem exists when loading large data, like images, from the native side into JS side for processing.
+- The TensorFlow library itself as well as the TensorFlow models are quite large in size resulting in large builds.
