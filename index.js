@@ -109,9 +109,9 @@ class ImageRecognition {
       ? Image.resolveAssetSource(data['model']).uri
       : data['model']
 
-    data['label'] = Image.resolveAssetSource(data['label']) != null
-      ? Image.resolveAssetSource(data['label']).uri
-      : data['label']
+    data['labels'] = Image.resolveAssetSource(data['labels']) != null
+      ? Image.resolveAssetSource(data['labels']).uri
+      : data['labels']
 
     this.init = RNImageRecognition.initImageRecognizer(this.id, data)
   }
