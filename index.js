@@ -127,5 +127,4 @@ class TfImageRecognition {
   }
 }
 
-export TensorFlow;
-export TfImageRecognition;
+export { TensorFlow, TfImageRecognition }
