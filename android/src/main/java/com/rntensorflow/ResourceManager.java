@@ -7,7 +7,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -17,6 +16,10 @@ public class ResourceManager {
 
     public ResourceManager(AssetManager assetManager) {
         this.assetManager = assetManager;
+    }
+
+    public String loadResourceAsString(String resource) {
+        return new String(loadResource(resource));
     }
 
     public byte[] loadResource(String resource) {

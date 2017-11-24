@@ -1,0 +1,114 @@
+package com.rntensorflow.imagerecognition;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import com.facebook.react.bridge.*;
+import com.rntensorflow.RNTensorflowInference;
+import com.rntensorflow.ResourceManager;
+import org.tensorflow.Tensor;
+
+import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.util.*;
+
+public class ImageRecognizer {
+
+
+    private static final int IMAGE_MEAN = 117;
+    private static final float IMAGE_STD = 1;
+
+    private static final int MAX_RESULTS = 3;
+    private static final float THRESHOLD = 0.1f;
+
+    private RNTensorflowInference inference;
+
+    private int imageMean;
+    private float imageStd;
+
+    private String[] labels;
+
+    public ImageRecognizer(RNTensorflowInference inference, int imageMean, float imageStd, String[] labels) {
+        this.inference = inference;
+        this.imageMean = imageMean;
+        this.imageStd = imageStd;
+        this.labels = labels;
+    }
+
+    public static ImageRecognizer init(
+            ReactContext reactContext,
+            String modelFilename,
+            String labelFilename,
+            Integer imageMean,
+            Double imageStd) throws IOException {
+        Integer imageMeanResolved = imageMean != null ? imageMean : IMAGE_MEAN;
+        Float imageStdResolved = imageStd != null ? imageStd.floatValue() : IMAGE_STD;
+
+        RNTensorflowInference inference = RNTensorflowInference.init(reactContext, modelFilename);
+        ResourceManager resourceManager = new ResourceManager(reactContext.getAssets());
+        String[] labels = resourceManager.loadResourceAsString(labelFilename).split("\\r?\\n");
+        return new ImageRecognizer(inference, imageMeanResolved, imageStdResolved, labels);
+    }
+
+    public WritableArray recognizeImage(final String image,
+                                        final String inputName,
+                                        final Integer inputSize,
+                                        final String outputName,
+                                        final Integer maxResults,
+                                        final Double threshold) {
+
+        String inputNameResolved = inputName != null ? inputName : "input";
+        String outputNameResolved = outputName != null ? outputName : "output";
+        Integer maxResultsResolved = maxResults != null ? maxResults : MAX_RESULTS;
+        Float thresholdResolved = threshold != null ? threshold.floatValue() : THRESHOLD;
+
+        int inputSizeResolved = inputSize != null ? inputSize : 224;
+        int[] intValues = new int[inputSizeResolved * inputSizeResolved];
+        float[] floatValues = new float[inputSizeResolved * inputSizeResolved * 3];
+
+        Bitmap bitmapRaw = loadImage(image);
+        Bitmap bitmap = Bitmap.createBitmap(bitmapRaw, 0, 0, inputSizeResolved, inputSizeResolved);
+        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        for (int i = 0; i < intValues.length; ++i) {
+            final int val = intValues[i];
+            floatValues[i * 3 + 0] = (((val >> 16) & 0xFF) - imageMean) / imageStd;
+            floatValues[i * 3 + 1] = (((val >> 8) & 0xFF) - imageMean) / imageStd;
+            floatValues[i * 3 + 2] = ((val & 0xFF) - imageMean) / imageStd;
+        }
+        Tensor tensor = Tensor.create(new long[]{1, inputSizeResolved, inputSizeResolved, 3}, FloatBuffer.wrap(floatValues));
+        inference.feed(inputNameResolved, tensor);
+        inference.run(new String[] {outputNameResolved}, false);
+        ReadableArray outputs = inference.fetch(outputNameResolved);
+
+        List<WritableMap> results = new ArrayList<>();
+        for (int i = 0; i < outputs.size(); ++i) {
+            if (outputs.getDouble(i) > thresholdResolved) {
+                WritableMap entry = new WritableNativeMap();
+                entry.putString("id", String.valueOf(i));
+                entry.putString("name", labels.length > i ? labels[i] : "unknown");
+                entry.putDouble("confidence", outputs.getDouble(i));
+                results.add(entry);
+            }
+        }
+
+        Collections.sort(results, new Comparator<ReadableMap>() {
+            @Override
+            public int compare(ReadableMap readableMap, ReadableMap t1) {
+                return Double.compare(readableMap.getDouble("confidence"), t1.getDouble("confidence"));
+            }
+        });
+        int finalSize = Math.min(results.size(), maxResultsResolved);
+        WritableArray array = new WritableNativeArray();
+        for (int i = 0; i < finalSize; i++) {
+            array.pushMap(results.get(i));
+        }
+
+        return array;
+    }
+
+    private Bitmap loadImage(String image) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        return BitmapFactory.decodeFile(image, options);
+    }
+
+}
