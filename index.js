@@ -65,7 +65,7 @@ class TensorFlowGraph {
   }
 }
 
-class TensorFlowInference {
+class TensorFlow {
 
   constructor(modelLocation) {
     this.id = uuid()
@@ -102,7 +102,7 @@ class TensorFlowInference {
   }
 }
 
-class ImageRecognition {
+class TfImageRecognition {
   constructor(data) {
     this.id = uuid()
     data['model'] = Image.resolveAssetSource(data['model']) != null
@@ -123,9 +123,9 @@ class ImageRecognition {
       ? Image.resolveAssetSource(data['image']).uri
       : data['image']
 
-    return RNTensorFlowInference.feed(this.id, data)
+    return RNImageRecognition.recognize(this.id, data)
   }
 }
 
-export TensorFlowInference;
-export ImageRecognition;
+export TensorFlow;
+export TfImageRecognition;
