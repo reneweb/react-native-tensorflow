@@ -21,14 +21,17 @@ public class ImageRecognizer {
     private static final float THRESHOLD = 0.1f;
 
     private RNTensorflowInference inference;
+    private ResourceManager resourceManager;
 
     private int imageMean;
     private float imageStd;
 
     private String[] labels;
 
-    public ImageRecognizer(RNTensorflowInference inference, int imageMean, float imageStd, String[] labels) {
+    public ImageRecognizer(RNTensorflowInference inference, ResourceManager resourceManager,
+                           int imageMean, float imageStd, String[] labels) {
         this.inference = inference;
+        this.resourceManager = resourceManager;
         this.imageMean = imageMean;
         this.imageStd = imageStd;
         this.labels = labels;
@@ -46,7 +49,7 @@ public class ImageRecognizer {
         RNTensorflowInference inference = RNTensorflowInference.init(reactContext, modelFilename);
         ResourceManager resourceManager = new ResourceManager(reactContext.getAssets());
         String[] labels = resourceManager.loadResourceAsString(labelFilename).split("\\r?\\n");
-        return new ImageRecognizer(inference, imageMeanResolved, imageStdResolved, labels);
+        return new ImageRecognizer(inference, resourceManager, imageMeanResolved, imageStdResolved, labels);
     }
 
     public WritableArray recognizeImage(final String image,
@@ -65,7 +68,7 @@ public class ImageRecognizer {
         int[] intValues = new int[inputSizeResolved * inputSizeResolved];
         float[] floatValues = new float[inputSizeResolved * inputSizeResolved * 3];
 
-        Bitmap bitmapRaw = loadImage(image);
+        Bitmap bitmapRaw = loadImage(resourceManager.loadResource(image));
         Bitmap bitmap = Bitmap.createBitmap(bitmapRaw, 0, 0, inputSizeResolved, inputSizeResolved);
         bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         for (int i = 0; i < intValues.length; ++i) {
@@ -93,7 +96,7 @@ public class ImageRecognizer {
         Collections.sort(results, new Comparator<ReadableMap>() {
             @Override
             public int compare(ReadableMap readableMap, ReadableMap t1) {
-                return Double.compare(readableMap.getDouble("confidence"), t1.getDouble("confidence"));
+                return Double.compare(t1.getDouble("confidence"), readableMap.getDouble("confidence"));
             }
         });
         int finalSize = Math.min(results.size(), maxResultsResolved);
@@ -105,10 +108,10 @@ public class ImageRecognizer {
         return array;
     }
 
-    private Bitmap loadImage(String image) {
+    private Bitmap loadImage(byte[] image) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        return BitmapFactory.decodeFile(image, options);
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 
 }
