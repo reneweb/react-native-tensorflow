@@ -31,7 +31,7 @@ Then run `pod install`.
 First you need to add the TensorFlow model to the project. There are a few ways to do that:
 
 - Add as react native asset
-Create the file `rn-cli.config.js` in the root of the project and at the following content in order for react native to bundle the model (ending with pb).
+Create the file `rn-cli.config.js` in the root of the project and add the following content in order for react native to bundle the model (ending with pb).
 ```
 module.exports = {
   getAssetExts() {
