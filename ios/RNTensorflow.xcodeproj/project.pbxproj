@@ -11,6 +11,8 @@
 		975CD8481F79E1B6005D2BB8 /* RNTensorFlowGraph.mm in Sources */ = {isa = PBXBuildFile; fileRef = 975CD8471F79E1B6005D2BB8 /* RNTensorFlowGraph.mm */; };
 		975CD84A1F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.mm in Sources */ = {isa = PBXBuildFile; fileRef = 975CD8491F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.mm */; };
 		A727A0BB1FCB466500D3B2C5 /* TensorFlowInference.mm in Sources */ = {isa = PBXBuildFile; fileRef = A727A0BA1FCB466500D3B2C5 /* TensorFlowInference.mm */; };
+		A7F0DCB51FDCD8C200E79844 /* ImageRecognizer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7F0DCB41FDCD8C200E79844 /* ImageRecognizer.mm */; };
+		A7F0DCB81FDCD8EA00E79844 /* RNImageRecognition.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7F0DCB71FDCD8EA00E79844 /* RNImageRecognition.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +37,10 @@
 		975CD84C1F79E1E1005D2BB8 /* RNTensorFlowGraphOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNTensorFlowGraphOperations.h; sourceTree = "<group>"; };
 		A727A0B91FCB465600D3B2C5 /* TensorFlowInference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TensorFlowInference.h; sourceTree = "<group>"; };
 		A727A0BA1FCB466500D3B2C5 /* TensorFlowInference.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TensorFlowInference.mm; sourceTree = "<group>"; };
+		A7F0DCB41FDCD8C200E79844 /* ImageRecognizer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageRecognizer.mm; sourceTree = "<group>"; };
+		A7F0DCB61FDCD8D700E79844 /* ImageRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageRecognizer.h; sourceTree = "<group>"; };
+		A7F0DCB71FDCD8EA00E79844 /* RNImageRecognition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RNImageRecognition.mm; sourceTree = "<group>"; };
+		A7F0DCB91FDCD90200E79844 /* RNImageRecognition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNImageRecognition.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +65,10 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				A7F0DCB91FDCD90200E79844 /* RNImageRecognition.h */,
+				A7F0DCB71FDCD8EA00E79844 /* RNImageRecognition.mm */,
+				A7F0DCB61FDCD8D700E79844 /* ImageRecognizer.h */,
+				A7F0DCB41FDCD8C200E79844 /* ImageRecognizer.mm */,
 				A727A0BA1FCB466500D3B2C5 /* TensorFlowInference.mm */,
 				A727A0B91FCB465600D3B2C5 /* TensorFlowInference.h */,
 				975CD84C1F79E1E1005D2BB8 /* RNTensorFlowGraphOperations.h */,
@@ -98,7 +108,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0830;
-				ORGANIZATIONNAME = Facebook;
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					58B511DA1A9E6C8500147676 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -128,7 +138,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				975CD8481F79E1B6005D2BB8 /* RNTensorFlowGraph.mm in Sources */,
+				A7F0DCB51FDCD8C200E79844 /* ImageRecognizer.mm in Sources */,
 				975CD84A1F79E1C8005D2BB8 /* RNTensorFlowGraphOperations.mm in Sources */,
+				A7F0DCB81FDCD8EA00E79844 /* RNImageRecognition.mm in Sources */,
 				A727A0BB1FCB466500D3B2C5 /* TensorFlowInference.mm in Sources */,
 				975CD8451F79E183005D2BB8 /* RNTensorFlowInference.mm in Sources */,
 			);

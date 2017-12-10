@@ -43,8 +43,88 @@ RCT_EXPORT_METHOD(initTensorFlowInference:(NSString *)tId modelLocation:(NSStrin
 RCT_EXPORT_METHOD(feed:(NSString *)tId data:(NSDictionary *)data resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     try {
+        
+        NSString * inputName = data[@"name"];
+        NSArray * srcData = data[@"data"];
+        NSArray * shape = data[@"shape"] ? data[@"shape"] : [NSArray new];
+        
+        tensorflow::DataType dtype;
+        if(data[@"dtype"]) {
+            tensorflow::DataType_Parse([[NSString stringWithFormat:@"%@%@", @"DT_", [data[@"dtype"] uppercaseString]] UTF8String] , &dtype);
+        } else {
+            dtype = tensorflow::DataType::DT_DOUBLE;
+        }
+        
+        int shapeCount = [shape count];
+        std::vector<tensorflow::int64> shapeC(shapeCount);
+        for (int i = 0; i < shapeCount; ++i) {
+            shapeC[i] = [[shape objectAtIndex:i] intValue];
+        }
+        
+        tensorflow::Tensor tensor(dtype, tensorflow::TensorShape(shapeC));
+        
+        if(dtype == tensorflow::DataType::DT_DOUBLE) {
+            int srcDataCount = [srcData count];
+            std::vector<double> srcDataC(srcDataCount);
+            for (int i = 0; i < [srcData count]; ++i) {
+                srcDataC[i] = [[srcData objectAtIndex:i] doubleValue];
+            }
+            
+            std::copy_n(srcDataC.begin(), srcDataC.size(), tensor.flat<double>().data());
+        } else if(dtype == tensorflow::DataType::DT_FLOAT) {
+            int srcDataCount = [srcData count];
+            std::vector<float> srcDataC(srcDataCount);
+            for (int i = 0; i < [srcData count]; ++i) {
+                srcDataC[i] = [[srcData objectAtIndex:i] floatValue];
+            }
+            
+            std::copy_n(srcDataC.begin(), srcDataC.size(), tensor.flat<float>().data());
+        } else if(dtype == tensorflow::DataType::DT_INT32) {
+            int srcDataCount = [srcData count];
+            std::vector<int32_t> srcDataC(srcDataCount);
+            for (int i = 0; i < [srcData count]; ++i) {
+                srcDataC[i] = [[srcData objectAtIndex:i] intValue];
+            }
+            
+            std::copy_n(srcDataC.begin(), srcDataC.size(), tensor.flat<int32_t>().data());
+        } else if(dtype == tensorflow::DataType::DT_INT64) {
+            int srcDataCount = [srcData count];
+            std::vector<int64_t> srcDataC(srcDataCount);
+            for (int i = 0; i < [srcData count]; ++i) {
+                srcDataC[i] = [[srcData objectAtIndex:i] longValue];
+            }
+            
+            std::copy_n(srcDataC.begin(), srcDataC.size(), tensor.flat<int64_t>().data());
+        } else if(dtype == tensorflow::DataType::DT_UINT8) {
+            int srcDataCount = [srcData count];
+            std::vector<u_int8_t> srcDataC(srcDataCount);
+            for (int i = 0; i < [srcData count]; ++i) {
+                srcDataC[i] = [[srcData objectAtIndex:i] intValue];
+            }
+            
+            std::copy_n(srcDataC.begin(), srcDataC.size(), tensor.flat<u_int8_t>().data());
+        } else if(dtype == tensorflow::DataType::DT_BOOL) {
+            int srcDataCount = [srcData count];
+            std::vector<bool> srcDataC(srcDataCount);
+            for (int i = 0; i < [srcData count]; ++i) {
+                srcDataC[i] = [[srcData objectAtIndex:i] boolValue];
+            }
+            
+            std::copy_n(srcDataC.begin(), srcDataC.size(), tensor.flat<bool>().data());
+        } else if(dtype == tensorflow::DataType::DT_STRING) {
+            int srcDataCount = [srcData count];
+            std::vector<std::string> srcDataC(srcDataCount);
+            for (int i = 0; i < [srcData count]; ++i) {
+                srcDataC[i] = [[srcData objectAtIndex:i] UTF8String];
+            }
+            
+            std::copy_n(srcDataC.begin(), srcDataC.size(), tensor.flat<std::string>().data());
+        } else {
+            throw std::invalid_argument("Invalid data type");
+        }
+        
         TensorFlowInference * inference = inferenceMap[[tId UTF8String]];
-        [inference feed:data];
+        [inference feed:inputName tensor:tensor];
         resolve(@1);
     } catch( std::exception& e ) {
         reject(RCTErrorUnspecified, @(e.what()), nil);

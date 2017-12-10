@@ -6,7 +6,7 @@
 @interface TensorFlowInference: NSObject
 
 - (id) initWithModel:(NSString *)modelLocation;
-- (void) feed:(NSDictionary *)data;
+- (void) feed:(NSString *)inputName tensor:(tensorflow::Tensor)tensor;
 - (void) run:(NSArray *)outputNames enableStats:(BOOL)enableStats;
 - (NSArray *) fetch:(NSString *)outputName;
 - (std::shared_ptr<tensorflow::GraphDef>) graph;

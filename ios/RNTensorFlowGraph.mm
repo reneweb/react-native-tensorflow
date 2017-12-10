@@ -29,9 +29,9 @@
             }
         }
     }
-
+    
     throw std::invalid_argument("Node / Operation with name not found");
-
+    
 }
 
 RCT_EXPORT_MODULE()
@@ -46,7 +46,7 @@ RCT_EXPORT_METHOD(importGraphDefWithPrefix:(NSString *)tId graphDef:(NSString *)
     try {
         NSData *graphDefDecodedData = [[NSData alloc] initWithBase64EncodedString:graphDef options:0];
         NSString *graphDefDecodedString = [[NSString alloc] initWithData:graphDefDecodedData encoding:NSUTF8StringEncoding];
-
+        
         auto graph = graphs.find([tId UTF8String]);
         if(graph != graphs.end()) {
             graph->second->ParseFromString([graphDefDecodedString UTF8String]);
