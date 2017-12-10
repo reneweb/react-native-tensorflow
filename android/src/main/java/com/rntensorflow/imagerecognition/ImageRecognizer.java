@@ -2,6 +2,8 @@ package com.rntensorflow.imagerecognition;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import com.facebook.react.bridge.*;
 import com.rntensorflow.RNTensorflowInference;
 import com.rntensorflow.ResourceManager;
@@ -64,12 +66,16 @@ public class ImageRecognizer {
         Integer maxResultsResolved = maxResults != null ? maxResults : MAX_RESULTS;
         Float thresholdResolved = threshold != null ? threshold.floatValue() : THRESHOLD;
 
+        Bitmap bitmapRaw = loadImage(resourceManager.loadResource(image));
+
         int inputSizeResolved = inputSize != null ? inputSize : 224;
         int[] intValues = new int[inputSizeResolved * inputSizeResolved];
         float[] floatValues = new float[inputSizeResolved * inputSizeResolved * 3];
 
-        Bitmap bitmapRaw = loadImage(resourceManager.loadResource(image));
-        Bitmap bitmap = Bitmap.createBitmap(bitmapRaw, 0, 0, inputSizeResolved, inputSizeResolved);
+        Bitmap bitmap = Bitmap.createBitmap(inputSizeResolved, inputSizeResolved, Bitmap.Config.ARGB_8888);
+        Matrix matrix = createMatrix(bitmapRaw.getWidth(), bitmapRaw.getHeight(), inputSizeResolved, inputSizeResolved);
+        final Canvas canvas = new Canvas(bitmap);
+        canvas.drawBitmap(bitmapRaw, matrix, null);
         bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         for (int i = 0; i < intValues.length; ++i) {
             final int val = intValues[i];
@@ -95,8 +101,8 @@ public class ImageRecognizer {
 
         Collections.sort(results, new Comparator<ReadableMap>() {
             @Override
-            public int compare(ReadableMap readableMap, ReadableMap t1) {
-                return Double.compare(t1.getDouble("confidence"), readableMap.getDouble("confidence"));
+            public int compare(ReadableMap first, ReadableMap second) {
+                return Double.compare(second.getDouble("confidence"), first.getDouble("confidence"));
             }
         });
         int finalSize = Math.min(results.size(), maxResultsResolved);
@@ -112,6 +118,20 @@ public class ImageRecognizer {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
+
+    private Matrix createMatrix(int srcWidth, int srcHeight, int dstWidth, int dstHeight) {
+        Matrix matrix = new Matrix();
+
+        if (srcWidth != dstWidth || srcHeight != dstHeight) {
+            float scaleFactorX = dstWidth / (float) srcWidth;
+            float scaleFactorY = dstHeight / (float) srcHeight;
+            float scaleFactor = Math.max(scaleFactorX, scaleFactorY);
+            matrix.postScale(scaleFactor, scaleFactor);
+        }
+
+        matrix.invert(new Matrix());
+        return matrix;
     }
 
 }
