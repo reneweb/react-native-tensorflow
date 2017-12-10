@@ -86,6 +86,7 @@ Check the android TensorFlow example for more information on the API: https://gi
 ### Fetching files
 
 - Add as react native asset
+
 Create the file `rn-cli.config.js` in the root of the project and add the following code where the array contains all the file endings you want to bundle (ending this case we bundle pb files next to the defaults).
 ```
 module.exports = {
@@ -97,12 +98,15 @@ module.exports = {
 Then you can require the asset in the code, for example: `require('assets/tensorflow_inception_graph.pb')`
 
 - Add as iOS / Android asset
+
 Put the file in the android/src/main/assets folder for Android and for iOS put the file, using XCode, in the root of the project. In the code you can just reference the file path for the asset.
 
 - Load from file system
+
 Put the file into the file system and reference using the file path.
 
 - Fetch via url
+
 Pass a url to fetch the file from a url. This won't store it locally, thus the next time the code is executed it will fetch it again.
 
 ## Supported data types
