@@ -54,7 +54,7 @@ const results = await tfImageRecognition.recognize({
   threshold: 0.1, //Optional, defaults to 0.1
 })
 
-results.forEach(result => 
+results.forEach(result =>
   console.log(
     results.id, // Id of the result
     results.name, // Name of the result
@@ -114,7 +114,7 @@ Pass a url to fetch the file from a url. This won't store it locally, thus the n
 - BOOL - On Android will be converted into a byte array
 - STRING - On Android will be converted into a byte array
 
-
 ## Known issues
-- Currently the data to feed to TensorFlow needs to be provided on the JS side and is then passed to the native side. Transferring large payloads this way is very inefficient and will likely have a negative performance impact. The same problem exists when loading large data, like images, from the native side into JS side for processing.
+- When using the image recognition api the results don't match exactly between Android and iOS. Most of the time they seem reasonable close though.
+- When using the direct api the data to feed to TensorFlow needs to be provided on the JS side and is then passed to the native side. Transferring large payloads this way is very inefficient and will likely have a negative performance impact. The same problem exists when loading large data, like images, from the native side into JS side for processing.
 - The TensorFlow library itself as well as the TensorFlow models are quite large in size resulting in large builds.
