@@ -4,19 +4,17 @@
 A TensorFlow inference library for react native.
 It follows the android inference api from TensorFlow: https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/android
 
-~~This library is currently only supporting android~~
-
 ## Getting started
 
 `$ npm install react-native-tensorflow --save`
 
-### Mostly automatic installation
+### Linking
 
 `$ react-native link react-native-tensorflow`
 
 #### Additional steps for iOS
 
-First you will need CocoaPods.
+For the iOS setup you will need CocoaPods.
 
 Create a Podfile in the iOS directory with the following content:
 ```
@@ -28,33 +26,52 @@ Then run `pod install`.
 
 ## Usage
 
-First you need to add the TensorFlow model to the project. There are a few ways to do that:
+This library provides a api to directly interact with TensorFlow and a simple image recognition api.
+For most use cases for image recognition the image recognition api should suffice.
 
-- Add as react native asset
-Create the file `rn-cli.config.js` in the root of the project and add the following content in order for react native to bundle the model (ending with pb).
+### Image recognition
+
+First you need to add the TensorFlow model as well as the label file to the project. There are a few ways to do that as described [here](#fetching-files)
+
+Next you need to initialize the TfImageRecognition class using the model and label files and then call the `recognize` function of the class with the image to recognize:
+
+```javascript
+import { TfImageRecognition } from 'react-native-tensorflow';
+
+const tfImageRecognition = new TfImageRecognition({
+  model: require('./assets/tensorflow_inception_graph.pb'),
+  labels: require('./assets/tensorflow_labels.txt'),
+  imageMean: 117, // Optional, defaults to 117
+  imageStd: 1 // Optional, defaults to 1
+})
+
+const results = await tfImageRecognition.recognize({
+  image: require('./assets/apple.jpg'),
+  inputName: "input", //Optional, defaults to "input"
+  inputSize: 224, //Optional, defaults to 224
+  outputName: "output", //Optional, defaults to "output"
+  maxResults: 3, //Optional, defaults to 3
+  threshold: 0.1, //Optional, defaults to 0.1
+})
+
+results.forEach(result => 
+  console.log(
+    results.id, // Id of the result
+    results.name, // Name of the result
+    results.confidence // Confidence value between 0 - 1
+  )
+)
 ```
-module.exports = {
-  getAssetExts() {
-    return ['pb']
-  }
-}
-```
-Then you can require the asset in the code, for example: `require('assets/tensorflow_inception_graph.pb')`
 
-- Add as iOS / Android asset
-Put the model in the android/src/main/assets folder for Android and for iOS put the model using XCode in the root of the project. In the code you can just reference the file path for the asset.
+### Direct API
 
-- Load from file system
-Put the model file into the file system and reference using the file path.
-
-- Fetch via url
-Pass a url to fetch the model from a url. This won't store it locally, thus the next time the code is executed it will fetch it again.
+First you need to add the TensorFlow model to the project. There are a few ways to do that as described [here](#fetching-files)
 
 After adding the model and creating a TensorFlow instance using the model you will need to feed your data as a array providing the input name, shape and data type.
 Then run the inference and lastly fetch the result.
 
 ```javascript
-import TensorFlow from 'react-native-tensorflow';
+import { TensorFlow } from 'react-native-tensorflow';
 
 const tf = new TensorFlow('tensorflow_inception_graph.pb')
 await tf.feed({name: "inputName", data: [1,2,3], shape:[1,2,4], dtype: "int64"})
@@ -66,7 +83,29 @@ console.log(output)
 
 Check the android TensorFlow example for more information on the API: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/android/src/org/tensorflow/demo/TensorFlowImageClassifier.java
 
-### Supported data types
+### Fetching files
+
+- Add as react native asset
+Create the file `rn-cli.config.js` in the root of the project and add the following code where the array contains all the file endings you want to bundle (ending this case we bundle pb files next to the defaults).
+```
+module.exports = {
+  getAssetExts() {
+    return ['pb']
+  }
+}
+```
+Then you can require the asset in the code, for example: `require('assets/tensorflow_inception_graph.pb')`
+
+- Add as iOS / Android asset
+Put the file in the android/src/main/assets folder for Android and for iOS put the file, using XCode, in the root of the project. In the code you can just reference the file path for the asset.
+
+- Load from file system
+Put the file into the file system and reference using the file path.
+
+- Fetch via url
+Pass a url to fetch the file from a url. This won't store it locally, thus the next time the code is executed it will fetch it again.
+
+## Supported data types
 - DOUBLE
 - FLOAT
 - INT32
