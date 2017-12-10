@@ -87,11 +87,11 @@ Check the android TensorFlow example for more information on the API: https://gi
 
 - Add as react native asset
 
-Create the file `rn-cli.config.js` in the root of the project and add the following code where the array contains all the file endings you want to bundle (ending this case we bundle pb files next to the defaults).
+Create the file `rn-cli.config.js` in the root of the project and add the following code where the array contains all the file endings you want to bundle (in this case we bundle pb and txt  files next to the defaults).
 ```
 module.exports = {
   getAssetExts() {
-    return ['pb']
+    return ['pb', 'txt']
   }
 }
 ```
