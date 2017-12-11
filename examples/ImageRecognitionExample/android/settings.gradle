@@ -1,0 +1,5 @@
+rootProject.name = 'ImageRecognitionExample'
+include ':react-native-tensorflow'
+project(':react-native-tensorflow').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-tensorflow/android')
+
+include ':app'
