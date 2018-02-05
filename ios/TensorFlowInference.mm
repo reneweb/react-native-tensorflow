@@ -53,7 +53,7 @@ namespace {
     LOG(INFO) << "Graph created.";
     
     NSURL *url = [NSURL URLWithString:modelLocation];
-    if (url && url.scheme && url.host) {
+    if (url) {
         NSData *data = [NSData dataWithContentsOfURL:url];
         
         const void *buf = [data bytes];

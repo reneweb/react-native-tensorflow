@@ -24,7 +24,7 @@
         inference = tensorFlowInference;
         
         NSURL *labelsUrl = [NSURL URLWithString:labelsInput];
-        if (labelsUrl && labelsUrl.scheme && labelsUrl.host) {
+        if (labelsUrl) {
             NSData * labelData = [[NSData alloc] initWithContentsOfURL: labelsUrl];
             NSString * labelString = [[NSString alloc] initWithData:labelData encoding:NSUTF8StringEncoding];
             labels = [labelString componentsSeparatedByString:@"\n"];
@@ -50,7 +50,7 @@
     NSData * imageData;
     NSURL *imageUrl = [NSURL URLWithString:image];
     NSString * imageType;
-    if (imageUrl && imageUrl.scheme && imageUrl.host) {
+    if (imageUrl) {
         imageData = [[NSData alloc] initWithContentsOfURL: imageUrl];
         imageType = [[imageUrl absoluteString] hasSuffix:@"png"] ? @"png" : @"jpg";
     } else if ([[NSFileManager defaultManager] fileExistsAtPath:image]) {
