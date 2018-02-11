@@ -52,17 +52,24 @@ namespace {
     tensorflow::GraphDef graph;
     LOG(INFO) << "Graph created.";
     
-    NSURL *url = [NSURL URLWithString:modelLocation];
-    if (url && url.scheme && url.host) {
-        NSData *data = [NSData dataWithContentsOfURL:url];
+    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[modelLocation substringToIndex:[modelLocation length] - 3] ofType:@"pb"];
+    if(bundlePath != NULL) {
+        fileToProto([bundlePath UTF8String], &graph);
+    } else if ([[NSFileManager defaultManager] fileExistsAtPath:modelLocation]) {
+        NSData *data = [[NSData alloc] initWithContentsOfFile:modelLocation];
         
         const void *buf = [data bytes];
         unsigned long numBytes = [data length];
         
         graph.ParseFromArray(buf, numBytes);
     } else {
-        NSString* network_path = filePathForResource([modelLocation substringToIndex:[modelLocation length] - 3], @"pb");
-        fileToProto([network_path UTF8String], &graph);
+        NSURL *url = [NSURL URLWithString:modelLocation];
+        NSData *data = [NSData dataWithContentsOfURL:url];
+        
+        const void *buf = [data bytes];
+        unsigned long numBytes = [data length];
+        
+        graph.ParseFromArray(buf, numBytes);
     }
     
     tensorflow::SessionOptions options;
@@ -218,16 +225,6 @@ NSArray* convertFetchResult(tensorflow::Tensor *tensor) {
     fetchTensors.clear();
     
     return session->Close();
-}
-
-NSString* filePathForResource(NSString* name, NSString* extension) {
-    NSString* file_path = [[NSBundle mainBundle] pathForResource:name ofType:extension];
-    if (file_path == NULL) {
-        std::stringstream str;
-        str << "Couldn't find '" << [name UTF8String] << "." << [extension UTF8String] << "' in bundle.";
-        throw std::invalid_argument(str.str());
-    }
-    return file_path;
 }
 
 bool fileToProto(const std::string& file_name, ::google::protobuf::MessageLite* proto) {

@@ -23,14 +23,18 @@
         TensorFlowInference * tensorFlowInference = [[TensorFlowInference alloc] initWithModel:modelInput];
         inference = tensorFlowInference;
         
-        NSURL *labelsUrl = [NSURL URLWithString:labelsInput];
-        if (labelsUrl && labelsUrl.scheme && labelsUrl.host) {
-            NSData * labelData = [[NSData alloc] initWithContentsOfURL: labelsUrl];
+        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[labelsInput substringToIndex:[labelsInput length] - 4] ofType:@"txt"];
+        if(bundlePath != NULL) {
+            NSString *labelString = [NSString stringWithContentsOfFile:bundlePath encoding:NSUTF8StringEncoding error:nil];
+            labels = [labelString componentsSeparatedByString:@"\n"];
+        } else if ([[NSFileManager defaultManager] fileExistsAtPath:labelsInput]) {
+            NSData * labelData = [[NSData alloc] initWithContentsOfFile:labelsInput];
             NSString * labelString = [[NSString alloc] initWithData:labelData encoding:NSUTF8StringEncoding];
             labels = [labelString componentsSeparatedByString:@"\n"];
-        } else {
-            NSString *path = [[NSBundle mainBundle] pathForResource:[labelsInput substringToIndex:[labelsInput length] - 3] ofType:@"txt"];
-            NSString *labelString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+        }  else {
+            NSURL *labelsUrl = [NSURL URLWithString:labelsInput];
+            NSData * labelData = [[NSData alloc] initWithContentsOfURL: labelsUrl];
+            NSString * labelString = [[NSString alloc] initWithData:labelData encoding:NSUTF8StringEncoding];
             labels = [labelString componentsSeparatedByString:@"\n"];
         }
         
@@ -48,18 +52,16 @@
     NSNumber * thresholdResolved = threshold != nil ? threshold : [NSNumber numberWithFloat:0.1];
     
     NSData * imageData;
-    NSURL *imageUrl = [NSURL URLWithString:image];
-    NSString * imageType;
-    if (imageUrl && imageUrl.scheme && imageUrl.host) {
-        imageData = [[NSData alloc] initWithContentsOfURL: imageUrl];
-        imageType = [[imageUrl absoluteString] hasSuffix:@"png"] ? @"png" : @"jpg";
+    NSString * imageType = [image hasSuffix:@"png"] ? @"png" : @"jpg";
+    
+    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[image substringToIndex:[image length] - 4] ofType:imageType];
+    if(bundlePath != NULL) {
+        imageData = [NSData dataWithContentsOfFile:bundlePath];
     } else if ([[NSFileManager defaultManager] fileExistsAtPath:image]) {
         imageData = [[NSData alloc] initWithContentsOfFile:image];
-        imageType = [image hasSuffix:@"png"] ? @"png" : @"jpg";
     } else {
-        imageType = [[image substringToIndex:[image length] - 3]  isEqual: @"png"] ? @"png" : @"jpg";
-        NSString *path = [[NSBundle mainBundle] pathForResource:[image substringToIndex:[image length] - 3] ofType:imageType];
-        imageData = [NSData dataWithContentsOfFile:path];
+        NSURL *imageUrl = [NSURL URLWithString:image];
+        imageData = [[NSData alloc] initWithContentsOfURL: imageUrl];
     }
     
     tensorflow::Tensor tensor = createImageTensor(imageData, [imageType UTF8String], [inputSizeResolved floatValue], [imageMean floatValue], [imageStd floatValue]);
