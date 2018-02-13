@@ -125,8 +125,14 @@ std::vector<tensorflow::uint8> imageAsVector(NSData * data, const char* image_ty
     
     CGImageRef image;
     if (strcasecmp(image_type, "png") == 0) {
-        image = CGImageCreateWithPNGDataProvider(image_provider, NULL, true,
+        try {
+            image = CGImageCreateWithPNGDataProvider(image_provider, NULL, true,
                                                  kCGRenderingIntentDefault);
+        } catch( std::exception& e ) {
+            CFRelease(image_provider);
+            CFRelease(file_data_ref);
+            throw;
+        }
     } else {
         try {
             image = CGImageCreateWithJPEGDataProvider(image_provider, NULL, true,
@@ -134,11 +140,7 @@ std::vector<tensorflow::uint8> imageAsVector(NSData * data, const char* image_ty
         } catch( std::exception& e ) {
             CFRelease(image_provider);
             CFRelease(file_data_ref);
-            fprintf(stderr, "Unknown iamge type\n");
-            *out_width = 0;
-            *out_height = 0;
-            *out_channels = 0;
-            return std::vector<tensorflow::uint8>();
+            throw;
         }
     }
     
