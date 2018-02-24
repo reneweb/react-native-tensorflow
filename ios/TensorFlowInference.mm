@@ -33,7 +33,7 @@ namespace {
     std::shared_ptr<tensorflow::GraphDef> tensorflowGraph;
     
     std::vector<std::string> feedNames;
-    std::vector<tensorflow::Tensor> feedTensors;
+    std::vector<tensorflow::Tensor> feedTensors; //TODO maybe make those tensor vectors std::shared_ptr ? (the tensors???)
     
     std::vector<std::string> fetchNames;
     std::vector<tensorflow::Tensor> fetchTensors;
@@ -135,7 +135,7 @@ namespace {
 - (NSArray *) fetch:(NSString *)outputName
 {
     int i = 0;
-    tensorflow::Tensor *tensor;
+    tensorflow::Tensor *tensor = nullptr;
     for(auto n : fetchNames) {
         if (n == [outputName UTF8String]) {
             tensor = &fetchTensors[i];
@@ -143,10 +143,7 @@ namespace {
         ++i;
     }
     
-    NSArray *result = convertFetchResult(tensor);
-    delete tensor;
-    
-    return result;
+    return convertFetchResult(tensor);
 }
 
 NSArray* convertFetchResult(tensorflow::Tensor *tensor) {
@@ -236,4 +233,3 @@ bool fileToProto(const std::string& file_name, ::google::protobuf::MessageLite* 
 }
 
 @end
-

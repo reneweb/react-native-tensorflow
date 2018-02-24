@@ -70,4 +70,3 @@ RCT_EXPORT_METHOD(close:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve
 }
 
 @end
-

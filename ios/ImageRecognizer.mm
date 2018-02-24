@@ -37,8 +37,6 @@
             NSString * labelString = [[NSString alloc] initWithData:labelData encoding:NSUTF8StringEncoding];
             labels = [labelString componentsSeparatedByString:@"\n"];
         }
-        
-        
     }
     return self;
 }
@@ -126,8 +124,7 @@ std::vector<tensorflow::uint8> imageAsVector(NSData * data, const char* image_ty
     CGImageRef image;
     if (strcasecmp(image_type, "png") == 0) {
         try {
-            image = CGImageCreateWithPNGDataProvider(image_provider, NULL, true,
-                                                 kCGRenderingIntentDefault);
+            image = CGImageCreateWithPNGDataProvider(image_provider, NULL, true, kCGRenderingIntentDefault);
         } catch( std::exception& e ) {
             CFRelease(image_provider);
             CFRelease(file_data_ref);
@@ -135,8 +132,7 @@ std::vector<tensorflow::uint8> imageAsVector(NSData * data, const char* image_ty
         }
     } else {
         try {
-            image = CGImageCreateWithJPEGDataProvider(image_provider, NULL, true,
-                                                      kCGRenderingIntentDefault);
+            image = CGImageCreateWithJPEGDataProvider(image_provider, NULL, true, kCGRenderingIntentDefault);
         } catch( std::exception& e ) {
             CFRelease(image_provider);
             CFRelease(file_data_ref);

@@ -125,6 +125,11 @@ class TfImageRecognition {
 
     return RNImageRecognition.recognize(this.id, data)
   }
+
+  async close() {
+    await this.init
+    return RNImageRecognition.close(this.id)
+  }
 }
 
 export { TensorFlow, TfImageRecognition }

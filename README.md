@@ -61,6 +61,8 @@ results.forEach(result =>
     results.confidence // Confidence value between 0 - 1
   )
 )
+
+await tfImageRecognition.close() // Necessary in order to release objects on naitve side
 ```
 
 ### Direct API
