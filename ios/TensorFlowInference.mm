@@ -33,7 +33,7 @@ namespace {
     std::shared_ptr<tensorflow::GraphDef> tensorflowGraph;
     
     std::vector<std::string> feedNames;
-    std::vector<tensorflow::Tensor> feedTensors; //TODO maybe make those tensor vectors std::shared_ptr ? (the tensors???)
+    std::vector<tensorflow::Tensor> feedTensors;
     
     std::vector<std::string> fetchNames;
     std::vector<tensorflow::Tensor> fetchTensors;
