@@ -1,7 +1,7 @@
 package com.rntensorflow;
 
-import android.content.res.AssetManager;
 import android.webkit.URLUtil;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.network.OkHttpClientProvider;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -12,10 +12,10 @@ import java.io.InputStream;
 
 public class ResourceManager {
 
-    private AssetManager assetManager;
+    private ReactContext reactContext;
 
-    public ResourceManager(AssetManager assetManager) {
-        this.assetManager = assetManager;
+    public ResourceManager(ReactContext reactContext) {
+        this.reactContext = reactContext;
     }
 
     public String loadResourceAsString(String resource) {
@@ -32,20 +32,28 @@ public class ResourceManager {
 
     private byte[] loadFromLocal(String resource) {
         try {
-            InputStream inputStream = assetManager.open(resource);
-            byte[] b = new byte[inputStream.available()];
-            inputStream.read(b);
-            return b;
-        } catch (IOException e) {
+            int identifier = reactContext.getResources().getIdentifier(resource, "drawable", reactContext.getPackageName());
+            InputStream inputStream = reactContext.getResources().openRawResource(identifier);
+            return inputStreamToByteArray(inputStream);
+        } catch (IOException | Resources.NotFoundException e) {
             try {
-                InputStream inputStream = new FileInputStream(resource);
-                byte[] b = new byte[inputStream.available()];
-                inputStream.read(b);
-                return b;
+                InputStream inputStream = reactContext.getAssets().open(resource);
+                return inputStreamToByteArray(inputStream);
             } catch (IOException e1) {
-                throw new IllegalArgumentException("Could not load resource");
+                try {
+                    InputStream inputStream = new FileInputStream(resource);
+                    return inputStreamToByteArray(inputStream);
+                } catch (IOException e2) {
+                    throw new IllegalArgumentException("Could not load resource");
+                }
             }
         }
+    }
+
+    private byte[] inputStreamToByteArray(InputStream inputStream) throws IOException {
+        byte[] b = new byte[inputStream.available()];
+        inputStream.read(b);
+        return b;
     }
 
     private byte[] loadFromUrl(String url) {

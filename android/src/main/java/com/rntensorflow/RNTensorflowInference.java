@@ -45,7 +45,7 @@ public class RNTensorflowInference {
     }
 
     private static TfContext createContext(ReactContext reactContext, String model) throws IOException {
-        byte[] b = new ResourceManager(reactContext.getAssets()).loadResource(model);
+        byte[] b = new ResourceManager(reactContext).loadResource(model);
 
         Graph graph = new Graph();
         graph.importGraphDef(b);

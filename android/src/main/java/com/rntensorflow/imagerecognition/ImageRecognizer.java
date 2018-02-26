@@ -49,7 +49,7 @@ public class ImageRecognizer {
         Float imageStdResolved = imageStd != null ? imageStd.floatValue() : IMAGE_STD;
 
         RNTensorflowInference inference = RNTensorflowInference.init(reactContext, modelFilename);
-        ResourceManager resourceManager = new ResourceManager(reactContext.getAssets());
+        ResourceManager resourceManager = new ResourceManager(reactContext);
         String[] labels = resourceManager.loadResourceAsString(labelFilename).split("\\r?\\n");
         return new ImageRecognizer(inference, resourceManager, imageMeanResolved, imageStdResolved, labels);
     }
