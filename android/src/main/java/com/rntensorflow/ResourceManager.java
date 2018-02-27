@@ -1,5 +1,6 @@
 package com.rntensorflow;
 
+import android.content.res.Resources;
 import android.webkit.URLUtil;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.network.OkHttpClientProvider;
