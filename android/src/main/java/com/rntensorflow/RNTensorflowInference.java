@@ -124,7 +124,7 @@ public class RNTensorflowInference {
 
     public static class TfContext {
         final Session session;
-        final Session.Runner runner;
+        Session.Runner runner;
         final Graph graph;
         private final Map<String, Tensor> outputTensors;
 
@@ -133,6 +133,11 @@ public class RNTensorflowInference {
             this.runner = runner;
             this.graph = graph;
             outputTensors = new HashMap<>();
+        }
+
+        public void reset() {
+            runner = session.runner();
+            outputTensors.clear();
         }
     }
 }

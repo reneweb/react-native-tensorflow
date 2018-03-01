@@ -81,7 +81,10 @@
     }];
     
     auto finalSize = MIN([resultsSorted count], [maxResultsResolved integerValue]);
-    return [resultsSorted subarrayWithRange:NSMakeRange(0, finalSize)];
+    NSArray * finalResults = [resultsSorted subarrayWithRange:NSMakeRange(0, finalSize)];
+    
+    [inference reset];
+    return finalResults;
 }
 
 tensorflow::Tensor createImageTensor(NSData * data, const char* image_type, float input_size, float input_mean, float input_std) {

@@ -111,6 +111,7 @@ public class ImageRecognizer {
             array.pushMap(results.get(i));
         }
 
+        inference.getTfContext().reset();
         return array;
     }
 

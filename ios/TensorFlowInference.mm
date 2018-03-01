@@ -214,6 +214,14 @@ NSArray* convertFetchResult(tensorflow::Tensor *tensor) {
     return tensorflowGraph;
 }
 
+-(void) reset
+{
+    feedNames.clear();
+    feedTensors.clear();
+    fetchNames.clear();
+    fetchTensors.clear();
+}
+
 -(tensorflow::Status) close
 {
     feedNames.clear();

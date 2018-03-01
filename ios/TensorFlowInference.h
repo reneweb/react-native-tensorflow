@@ -10,6 +10,7 @@
 - (void) run:(NSArray *)outputNames enableStats:(BOOL)enableStats;
 - (NSArray *) fetch:(NSString *)outputName;
 - (std::shared_ptr<tensorflow::GraphDef>) graph;
+- (void) reset;
 - (tensorflow::Status) close;
 
 @end
