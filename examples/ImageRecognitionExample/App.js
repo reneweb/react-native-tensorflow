@@ -37,9 +37,11 @@ export default class App extends Component<{}> {
       const results = await tfImageRecognition.recognize({
         image: this.image
       })
-
+      
       const resultText = `Name: ${results[0].name} - Confidence: ${results[0].confidence}`
       this.setState({result: resultText})
+  
+      await tfImageRecognition.close()
     } catch(err) {
       alert(err)
     }
