@@ -56,9 +56,9 @@ const results = await tfImageRecognition.recognize({
 
 results.forEach(result =>
   console.log(
-    results.id, // Id of the result
-    results.name, // Name of the result
-    results.confidence // Confidence value between 0 - 1
+    result.id, // Id of the result
+    result.name, // Name of the result
+    result.confidence // Confidence value between 0 - 1
   )
 )
 
