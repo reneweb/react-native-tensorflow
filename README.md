@@ -62,7 +62,7 @@ results.forEach(result =>
   )
 )
 
-await tfImageRecognition.close() // Necessary in order to release objects on naitve side
+await tfImageRecognition.close() // Necessary in order to release objects on native side
 ```
 
 ### Direct API
