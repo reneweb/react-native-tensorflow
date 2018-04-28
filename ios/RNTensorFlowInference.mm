@@ -156,6 +156,17 @@ RCT_EXPORT_METHOD(fetch:(NSString *)tId outputName:(NSString *)outputName resolv
     }
 }
 
+RCT_EXPORT_METHOD(reset:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    try {
+        TensorFlowInference * inference = inferenceMap[[tId UTF8String]];
+        [inference reset];
+        resolve(@1);
+    } catch( std::exception& e ) {
+        reject(RCTErrorUnspecified, @(e.what()), nil);
+    }
+}
+
 RCT_EXPORT_METHOD(close:(NSString *)tId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     try {
