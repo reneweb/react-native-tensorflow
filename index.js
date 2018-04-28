@@ -96,6 +96,11 @@ class TensorFlow {
     return this.tfGraph
   }
 
+  async reset() {
+    await this.init
+    return RNTensorFlowInference.reset(this.id)
+  }
+  
   async close() {
     await this.init
     return RNTensorFlowInference.close(this.id)

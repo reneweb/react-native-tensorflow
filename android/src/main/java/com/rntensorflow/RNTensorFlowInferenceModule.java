@@ -125,6 +125,17 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void reset(String id, Promise promise) {
+    try {
+      RNTensorflowInference inference = inferenceMap.get(id);
+      inference.getTfContext().reset();
+      promise.resolve(true);
+    } catch (Exception e) {
+      promise.reject(e);
+    }
+  }
+
+  @ReactMethod
   public void close(String id, Promise promise) {
     try {
       RNTensorflowInference inference = inferenceMap.get(id);
