@@ -66,6 +66,7 @@ await tfImageRecognition.close() // Necessary in order to release objects on nat
 ```
 
 ### Direct API
+*Note: It is not recommended to use this API as it has some major problem described in [the second point in the known issues](https://github.com/reneweb/react-native-tensorflow/blob/master/README.md#known-issues) and is quite difficult to use in its current state.*
 
 First you need to add the TensorFlow model to the project. There are a few ways to do that as described [here](#fetching-files)
 
