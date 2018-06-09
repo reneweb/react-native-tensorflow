@@ -51,14 +51,15 @@
     
     NSData * imageData;
     NSString * imageType = [image hasSuffix:@"png"] ? @"png" : @"jpg";
+    NSString * imageSanitized = [image hasPrefix:@"file://"] ? [image substringFromIndex:7] : image;
     
-    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[image substringToIndex:[image length] - 4] ofType:imageType];
+    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[imageSanitized substringToIndex:[imageSanitized length] - 4] ofType:imageType];
     if(bundlePath != NULL) {
         imageData = [NSData dataWithContentsOfFile:bundlePath];
-    } else if ([[NSFileManager defaultManager] fileExistsAtPath:image]) {
-        imageData = [[NSData alloc] initWithContentsOfFile:image];
+    } else if ([[NSFileManager defaultManager] fileExistsAtPath:imageSanitized]) {
+        imageData = [[NSData alloc] initWithContentsOfFile:imageSanitized];
     } else {
-        NSURL *imageUrl = [NSURL URLWithString:image];
+        NSURL *imageUrl = [NSURL URLWithString:imageSanitized];
         imageData = [[NSData alloc] initWithContentsOfURL: imageUrl];
     }
     
