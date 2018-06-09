@@ -24,7 +24,9 @@ public class ResourceManager {
     }
 
     public byte[] loadResource(String resource) {
-        if(URLUtil.isValidUrl(resource)) {
+        if(resource.startsWith("file://")) {
+            return loadFromLocal(resource.substring(7));
+        } else if(URLUtil.isValidUrl(resource)) {
             return loadFromUrl(resource);
         } else {
             return loadFromLocal(resource);
