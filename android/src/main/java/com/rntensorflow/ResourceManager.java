@@ -3,7 +3,7 @@ package com.rntensorflow;
 import android.content.res.Resources;
 import android.webkit.URLUtil;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.modules.network.OkHttpClientProvider;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -61,8 +61,9 @@ public class ResourceManager {
 
     private byte[] loadFromUrl(String url) {
         try {
+            OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder().url(url).get().build();
-            Response response = OkHttpClientProvider.createClient().newCall(request).execute();
+            Response response = client.newCall(request).execute();
             return response.body().bytes();
         } catch (IOException e) {
             throw new IllegalStateException("Could not fetch data from url " + url);
