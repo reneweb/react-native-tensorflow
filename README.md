@@ -90,13 +90,29 @@ Check the android TensorFlow example for more information on the API: https://gi
 
 - Add as react native asset
 
-Create the file `rn-cli.config.js` in the root of the project and add the following code where the array contains all the file endings you want to bundle (in this case we bundle pb and txt  files next to the defaults).
+Create the file `metro.config.js` in the root of the project and add the following code where the array contains all the file endings you want to bundle (in this case we bundle pb and txt  files next to the defaults).
 ```
+const defaultAssetExts = require("metro-config/src/defaults/defaults").assetExts;
+
+
 module.exports = {
-  getAssetExts() {
-    return ['pb', 'txt']
-  }
-}
+
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: false,
+      },
+    }),
+  },
+
+
+  resolver: {
+    assetExts: [...defaultAssetExts, 'pb', 'txt',],
+
+  },
+};
+
 ```
 Then you can require the asset in the code, for example: `require('assets/tensorflow_inception_graph.pb')`
 
