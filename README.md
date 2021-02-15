@@ -1,6 +1,8 @@
 
 # react-native-tensorflow
 
+**Note: This project is not maintained anymore**
+
 A TensorFlow inference library for react native.
 It follows the android inference api from TensorFlow: https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/android
 
