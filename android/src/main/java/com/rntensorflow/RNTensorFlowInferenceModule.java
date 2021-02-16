@@ -89,10 +89,10 @@ public class RNTensorFlowInferenceModule extends ReactContextBaseJavaModule {
         inference.feed(inputName, Tensor.create(shape, IntBuffer.wrap(srcData)));
       } else if(dtype == DataType.BOOL) {
         byte[] srcData = readableArrayToByteBoolArray(data.getArray("data"));
-        inference.feed(inputName, Tensor.create(dtype, shape, ByteBuffer.wrap(srcData)));
+        inference.feed(inputName, Tensor.create(Boolean.class, shape, ByteBuffer.wrap(srcData)));
       } else if(dtype == DataType.STRING) {
         byte[] srcData = readableArrayToByteStringArray(data.getArray("data"));
-        inference.feed(inputName, Tensor.create(dtype, shape, ByteBuffer.wrap(srcData)));
+        inference.feed(inputName, Tensor.create(String.class, shape, ByteBuffer.wrap(srcData)));
       } else {
         promise.reject(new IllegalArgumentException("Data type is not supported"));
         return;
